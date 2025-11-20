@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">FatFox Hospital</string>
+    <!-- Title -->
+    <string name="nurse_directory">Nurse Directory</string>
+    <string name="quick_find_nurse">Quickly find nurses by name</string>
+
+    <!-- Search -->
+    <string name="search_placeholder">Enter nurse name…</string>
+    <string name="clear">Clear</string>
+
+    <!-- Search results -->
+    <string name="typing_to_search">Type to search nurses</string>
+    <string name="no_nurses_found">No nurses found</string>
+    <string name="found_one_nurse">Found %1$d nurse</string>
+    <string name="found_many_nurses">Found %1$d nurses</string>
+
+    <!-- Empty state -->
+    <string name="empty_try_another">Try search with another name</string>
+</resources>
