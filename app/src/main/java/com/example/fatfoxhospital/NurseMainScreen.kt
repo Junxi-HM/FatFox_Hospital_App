@@ -60,7 +60,7 @@ class Screen(
 )
 
 val screens = listOf(
-    Screen("Login Screen", "Screen to login to the application"),
+    Screen("Login Screen", "Screen to login to the application", LoginActivity::class),
     Screen("Index Screen", "Screen where you can see all the nurses data", NurseIndexScreen::class),
     Screen("Search Screen", "Screen to search a nurse by name", Search::class),
 )
