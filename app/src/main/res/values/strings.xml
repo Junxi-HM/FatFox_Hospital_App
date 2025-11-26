@@ -14,6 +14,10 @@
     <string name="found_one_nurse">Found %1$d nurse</string>
     <string name="found_many_nurses">Found %1$d nurses</string>
 
+    <!-- Nurse Index -->
+    <string name="nurse_index_title">Nurse Index</string>
+    <string name="nurse_index_username">Username</string>
+
     <!-- Empty state -->
     <string name="empty_try_another">Try search with another name</string>
 </resources>
