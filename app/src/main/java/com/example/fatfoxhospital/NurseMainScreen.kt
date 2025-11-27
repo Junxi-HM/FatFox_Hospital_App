@@ -5,33 +5,29 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.LocalHospital
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.automirrored.filled.Login
+import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.filled.PersonSearch
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.paint
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -39,11 +35,9 @@ import androidx.compose.ui.unit.sp
 import com.example.fatfoxhospital.ui.theme.FatFoxHospitalTheme
 import kotlin.reflect.KClass
 
-@OptIn(ExperimentalMaterial3Api::class)
 class NurseMainScreen : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContent {
             FatFoxHospitalTheme {
                 NurseMainScreenContent(screens = screens)
@@ -52,22 +46,25 @@ class NurseMainScreen : AppCompatActivity() {
     }
 }
 
-// Screen Model
+// Screen Model updated to use resource IDs and include an icon
 class Screen(
-    val title: String,
-    val description: String,
+    val titleResId: Int,
+    val descriptionResId: Int,
+    val icon: ImageVector,
     val targetActivity: KClass<out AppCompatActivity>? = null
 )
 
 val screens = listOf(
-    Screen("Login Screen", "Screen to login to the application", LoginActivity::class),
-    Screen("Index Screen", "Screen where you can see all the nurses data", NurseIndexScreen::class),
-    Screen("Search Screen", "Screen to search a nurse by name", Search::class),
+    Screen(R.string.login_screen_title, R.string.login_screen_desc,
+        Icons.AutoMirrored.Filled.Login, LoginActivity::class),
+    Screen(R.string.index_screen_title, R.string.index_screen_desc,
+        Icons.AutoMirrored.Filled.List, NurseIndexScreen::class),
+    Screen(R.string.search_screen_title, R.string.search_screen_desc, Icons.Default.PersonSearch, Search::class),
 )
 
 @Composable
 fun ScreenItem(screen: Screen, context: Context, modifier: Modifier = Modifier) {
-    Card(
+    ElevatedCard(
         onClick = {
             screen.targetActivity?.let { target ->
                 val intent = Intent(context, target.java)
@@ -75,77 +72,114 @@ fun ScreenItem(screen: Screen, context: Context, modifier: Modifier = Modifier) 
             }
         },
         modifier = modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp, horizontal = 8.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+            .fillMaxWidth(),
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 6.dp),
+        shape = RoundedCornerShape(24.dp),
+        colors = CardDefaults.elevatedCardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+        )
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(24.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(
-                imageVector = Icons.Default.LocalHospital,
-                contentDescription = "Hospital Icon",
-                modifier = Modifier.size(40.dp)
-            )
-            Spacer(modifier = Modifier.width(16.dp))
-            Column {
-                Text(
-                    text = screen.title,
-                    style = MaterialTheme.typography.titleLarge
-                )
-                Text(
-                    text = screen.description,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.secondary
+            // Styled Icon Container for visual punch (using material icons here)
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .size(56.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.primaryContainer)
+            ) {
+                Icon(
+                    imageVector = screen.icon,
+                    contentDescription = null,
+                    modifier = Modifier.size(28.dp),
+                    tint = MaterialTheme.colorScheme.onPrimaryContainer
                 )
             }
+
+            Spacer(modifier = Modifier.width(20.dp))
+
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = stringResource(screen.titleResId),
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp
+                    )
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = stringResource(screen.descriptionResId),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+
+            Icon(
+                imageVector = Icons.Default.ChevronRight,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+            )
         }
     }
 }
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
 fun NurseMainScreenContent(screens: List<Screen>) {
     val context = LocalContext.current
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                navigationIcon = {
-                    IconButton(onClick = {
-                        val intent = Intent(context, NurseMainScreen::class.java)
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                        context.startActivity(intent)
-                    }) {
-                        Icon(
-                            imageVector = Icons.Default.LocalHospital,
-                            contentDescription = "Hospital Icon",
-                            modifier = Modifier.size(40.dp)
-                        )
-                    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .statusBarsPadding()
+            .paint(
+                painterResource(id = R.drawable.appbg),
+                contentScale = ContentScale.FillBounds
+            )
+            .padding(horizontal = 24.dp)
+    ) {
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // --- Header Row (Logo and Title on the SAME LINE) ---
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(bottom = 24.dp)
+        ) {
+            IconButton(
+                onClick = {
+                    val intent = Intent(context, NurseMainScreen::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    context.startActivity(intent)
                 },
-                title = {
-                    Text(
-                        "Nurse Main Screen",
-                        fontSize = 40.sp,
-                        fontWeight = FontWeight.Bold,
-                        style = MaterialTheme.typography.headlineSmall
-                    )
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(48.dp)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.logo),
+                    contentDescription = stringResource(R.string.hospital_icon_desc),
+                    modifier = Modifier.size(72.dp),
+                )
+            }
+
+            Spacer(modifier = Modifier.width(12.dp))
+
+            Text(
+                text = stringResource(R.string.hospital_manager),
+                style = MaterialTheme.typography.headlineLarge.copy(
+                    fontWeight = FontWeight.ExtraBold,
+                    letterSpacing = (-0.5).sp
                 )
             )
         }
-    ) { innerPadding ->
+
+        // --- List Content ---
         LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding),
-            contentPadding = PaddingValues(8.dp)
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(bottom = 24.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             items(screens) { screen ->
                 ScreenItem(screen, context)

@@ -20,4 +20,17 @@
 
     <!-- Empty state -->
     <string name="empty_try_another">Try search with another name</string>
+    <!-- Nurse Main Screen -->
+    <string name="hospital_manager">Hospital Manager</string>
+    <string name="login_screen_title">Login Screen</string>
+    <string name="login_screen_desc">Access application</string>
+
+    <string name="index_screen_title">Index Screen</string>
+    <string name="index_screen_desc">View all nurses data</string>
+
+    <string name="search_screen_title">Search Screen</string>
+    <string name="search_screen_desc">Find nurse by name</string>
+
+    <string name="hospital_icon_desc">Hospital Icon</string>
+
 </resources>

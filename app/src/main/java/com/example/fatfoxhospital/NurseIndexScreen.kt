@@ -4,17 +4,23 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.LocalHospital
-import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.paint
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -26,45 +32,66 @@ import com.example.fatfoxhospital.ui.theme.FatFoxHospitalTheme
 class NurseIndexScreen : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContent {
             FatFoxHospitalTheme {
-                NurseIndexScreen(nurses = NurseList.mockNurses)
+                NurseIndexScreenContent(nurses = NurseList.mockNurses)
             }
         }
     }
 }
 
-// ITEM OF NURSE
+// ITEM OF NURSE (Consistent with Search.kt style)
 @Composable
 fun NurseItem(nurse: Nurse, modifier: Modifier = Modifier) {
-    Card(
+    ElevatedCard( // Changed to ElevatedCard
         modifier = modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp, horizontal = 8.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+            .fillMaxWidth(),
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp),
+        shape = RoundedCornerShape(24.dp), // Rounded corners for consistency
+        colors = CardDefaults.elevatedCardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+        )
     ) {
         Row(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(
-                imageVector = Icons.Default.Person,
-                contentDescription = "Nurse Icon",
-                modifier = Modifier.size(40.dp)
-            )
-            Spacer(modifier = Modifier.width(16.dp))
-            Column(
-                modifier = Modifier.padding(16.dp)
+            // Avatar Circle (Consistent with Search.kt)
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .size(56.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.primary)
             ) {
+                // Initial calculation logic from Search.kt
+                val initials = if (nurse.name.isNotEmpty() && nurse.surname.isNotEmpty()) {
+                    "${nurse.name.first()}${nurse.surname.first()}"
+                } else "?"
+
+                Text(
+                    text = initials,
+                    fontWeight = FontWeight.ExtraBold,
+                    fontSize = 20.sp,
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+            }
+
+            Spacer(modifier = Modifier.width(20.dp))
+
+            Column {
                 Text(
                     text = "${nurse.name} ${nurse.surname}",
-                    style = MaterialTheme.typography.titleLarge
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.SemiBold
                 )
+                Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = stringResource(R.string.nurse_index_username) + ": ${nurse.user}",
+                    text = "${stringResource(R.string.nurse_index_username)}: ${nurse.user}",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.secondary
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         }
@@ -72,47 +99,61 @@ fun NurseItem(nurse: Nurse, modifier: Modifier = Modifier) {
 }
 
 // MAIN SCREEN
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NurseIndexScreen(nurses: List<Nurse>) {
+fun NurseIndexScreenContent(nurses: List<Nurse>) {
     val context = LocalContext.current
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                navigationIcon = {
-                    IconButton(onClick = {
-                        // Ir al main menu
-                        val intent = Intent(context, NurseMainScreen::class.java)
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                        context.startActivity(intent)
-                    }) {
-                        Icon(
-                            imageVector = Icons.Default.LocalHospital,
-                            contentDescription = "Hospital Icon",
-                            modifier = Modifier.size(40.dp)
-                        )
-                    }
+
+    // Replacing Scaffold TopBar with custom Column layout for same-line header consistency
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .statusBarsPadding()
+            .paint(
+                painterResource(id = R.drawable.appbg),
+                contentScale = ContentScale.FillBounds
+            )
+            .padding(horizontal = 24.dp)
+    ) {
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // --- Header Row (Back Icon and Title on the SAME LINE) ---
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(bottom = 24.dp)
+        ) {
+            IconButton(
+                onClick = {
+                    // Logic Unchanged: Go back to main menu
+                    val intent = Intent(context, NurseMainScreen::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    context.startActivity(intent)
                 },
-                title = {
-                    Text(
-                        text = stringResource(R.string.nurse_index_title),
-                        fontSize = 40.sp,
-                        fontWeight = FontWeight.Bold,
-                        style = MaterialTheme.typography.headlineSmall
-                    )
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(48.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack, // Standard Back Icon
+                    contentDescription = "Back",
+                    modifier = Modifier.size(28.dp),
+                    tint = MaterialTheme.colorScheme.onSurface
+                )
+            }
+
+            Spacer(modifier = Modifier.width(12.dp))
+
+            Text(
+                text = stringResource(R.string.nurse_index_title),
+                style = MaterialTheme.typography.headlineLarge.copy(
+                    fontWeight = FontWeight.ExtraBold,
+                    letterSpacing = (-0.5).sp
                 )
             )
         }
-    ) { innerPadding ->
+
+        // --- List Content ---
         LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding),
-            contentPadding = PaddingValues(8.dp)
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(bottom = 24.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             items(nurses) { nurse ->
                 NurseItem(nurse)
@@ -125,6 +166,6 @@ fun NurseIndexScreen(nurses: List<Nurse>) {
 @Composable
 fun PreviewNurseIndexScreen() {
     FatFoxHospitalTheme {
-        NurseIndexScreen(nurses = NurseList.mockNurses)
+        NurseIndexScreenContent(nurses = NurseList.mockNurses)
     }
 }
