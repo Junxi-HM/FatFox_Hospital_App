@@ -1,4 +1,4 @@
-package com.example.fatfoxhospital;
+package com.example.fatfoxhospital.pr06;
 import java.util.Arrays;
 import java.util.List;
 public class NurseList {

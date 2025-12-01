@@ -11,7 +11,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FatFoxHospital">
         <activity
-            android:name=".NurseMainScreen"
+            android:name=".pr06.NurseMainScreen"
             android:exported="true"
             android:theme="@style/Theme.FatFoxHospital">
             <intent-filter>
@@ -21,16 +21,16 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".NurseIndexScreen"
+            android:name=".pr06.NurseIndexScreen"
             android:exported="true"
             android:theme="@style/Theme.FatFoxHospital">
         </activity>
         <activity
-            android:name=".Search"
+            android:name=".pr06.Search"
             android:exported="true"
             android:theme="@style/Theme.FatFoxHospital">
         </activity>
-        <activity android:name=".LoginActivity" />
+        <activity android:name=".pr06.LoginActivity" />
     </application>
 
 </manifest>

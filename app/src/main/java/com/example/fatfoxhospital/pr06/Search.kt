@@ -1,4 +1,4 @@
-package com.example.fatfoxhospital
+package com.example.fatfoxhospital.pr06
 
 import android.content.Intent
 import android.os.Bundle
@@ -61,6 +61,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.fatfoxhospital.R
 
 class Search : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

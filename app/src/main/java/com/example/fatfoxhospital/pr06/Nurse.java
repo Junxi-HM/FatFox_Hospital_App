@@ -1,4 +1,4 @@
-package com.example.fatfoxhospital;
+package com.example.fatfoxhospital.pr06;
 
 public class Nurse {
     private long id;
