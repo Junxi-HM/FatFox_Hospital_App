@@ -1,36 +1,23 @@
 <resources>
-    <string name="app_name">FatFox Hospital</string>
-    <!-- Title -->
-    <string name="nurse_directory">Nurse Directory</string>
-    <string name="quick_find_nurse">Quickly find nurses by name</string>
-
-    <!-- Search -->
-    <string name="search_placeholder">Enter nurse name…</string>
-    <string name="clear">Clear</string>
-
-    <!-- Search results -->
-    <string name="typing_to_search">Type to search nurses</string>
-    <string name="no_nurses_found">No nurses found</string>
-    <string name="found_one_nurse">Found %1$d nurse</string>
-    <string name="found_many_nurses">Found %1$d nurses</string>
-
-    <!-- Nurse Index -->
-    <string name="nurse_index_title">Nurse Index</string>
-    <string name="nurse_index_username">Username</string>
-
-    <!-- Empty state -->
-    <string name="empty_try_another">Try search with another name</string>
-    <!-- Nurse Main Screen -->
-    <string name="hospital_manager">Hospital Manager</string>
-    <string name="login_screen_title">Login Screen</string>
-    <string name="login_screen_desc">Access application</string>
-
-    <string name="index_screen_title">Index Screen</string>
-    <string name="index_screen_desc">View all nurses data</string>
-
-    <string name="search_screen_title">Search Screen</string>
-    <string name="search_screen_desc">Find nurse by name</string>
-
-    <string name="hospital_icon_desc">Hospital Icon</string>
+    <string name="app_name">FatFox Hospital PR07</string>
+    <string name="hospital_manager">Gestor Hospitalario</string>
+    <string name="hospital_icon_desc">Icono del Hospital</string>
+    <string name="login_screen_title">Iniciar Sesión</string>
+    <string name="login_screen_desc">Acceso para enfermeras</string>
+    <string name="index_screen_title">Listado Completo</string>
+    <string name="index_screen_desc">Ver todas las enfermeras</string>
+    <string name="search_screen_title">Búsqueda</string>
+    <string name="search_screen_desc">Buscar enfermeras por nombre</string>
+    <string name="nurse_index_title">Directorio de Enfermeras</string>
+    <string name="nurse_index_username">Usuario</string>
+    <string name="nurse_directory">Directorio de Enfermeras</string>
+    <string name="quick_find_nurse">Búsqueda rápida</string>
+    <string name="search_placeholder">Buscar por nombre o apellido...</string>
+    <string name="typing_to_search">Empieza a escribir para buscar</string>
+    <string name="no_nurses_found">No se encontraron enfermeras</string>
+    <string name="found_one_nurse">Encontrada %d enfermera</string>
+    <string name="found_many_nurses">Encontradas %d enfermeras</string>
+    <string name="empty_try_another">Intenta con otro término</string>
+    <string name="clear">Limpiar</string>
 
 </resources>
