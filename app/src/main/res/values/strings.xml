@@ -20,4 +20,8 @@
     <string name="empty_try_another">Intenta con otro término</string>
     <string name="clear">Limpiar</string>
 
+    <!-- Nurse Login Screen -->
+    <string name="nurse_login_title">Login</string>
+    <string name="nurse_login_title_capital_letters">LOGIN</string>
+    <string name="back_to_main_text">BACK TO MAIN</string>
 </resources>
