@@ -71,9 +71,24 @@ class Screen(
 )
 
 val mockScreens = listOf(
-    Screen(R.string.index_screen_title, R.string.index_screen_desc, Icons.AutoMirrored.Filled.List, "Index"),
-    Screen(R.string.search_screen_title, R.string.search_screen_desc, Icons.Default.PersonSearch, "Search"),
-    Screen(R.string.login_screen_title, R.string.login_screen_desc, Icons.AutoMirrored.Filled.Login, "Login"),
+    Screen(
+        R.string.index_screen_title,
+        R.string.index_screen_desc,
+        Icons.AutoMirrored.Filled.List,
+        "Index"
+    ),
+    Screen(
+        R.string.search_screen_title,
+        R.string.search_screen_desc,
+        Icons.Default.PersonSearch,
+        "Search"
+    ),
+    Screen(
+        R.string.login_screen_title,
+        R.string.login_screen_desc,
+        Icons.AutoMirrored.Filled.Login,
+        "Login"
+    ),
 )
 
 @Composable

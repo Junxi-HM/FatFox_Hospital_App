@@ -16,6 +16,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
@@ -57,7 +58,7 @@ fun NurseLoginScreen(viewModel: NurseViewModel, navController: NavHostController
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "Login",
+                    text = stringResource(R.string.nurse_login_title),
                     fontSize = 36.sp,
                     fontWeight = FontWeight.Bold,
                     color = colorResource(id = R.color.lavender),
@@ -128,7 +129,8 @@ fun NurseLoginScreen(viewModel: NurseViewModel, navController: NavHostController
                     shape = RoundedCornerShape(30.dp)
                 ) {
                     Text(
-                        text = "LOGIN", fontSize = 20.sp,
+                        text = stringResource(R.string.nurse_login_title_capital_letters),
+                        fontSize = 20.sp,
                         color = colorResource(
                             id = R.color.black
                         ),
@@ -144,7 +146,7 @@ fun NurseLoginScreen(viewModel: NurseViewModel, navController: NavHostController
                     shape = RoundedCornerShape(5.dp),
                 ) {
                     Text(
-                        text = "BACK TO MAIN",
+                        text = stringResource(R.string.back_to_main_text),
                         fontSize = 15.sp,
                         color = colorResource(
                             id = R.color.black
