@@ -1,6 +1,7 @@
-package com.example.fatfoxhospital.pr07
+package com.example.fatfoxhospital.pr07.viewmodel
 
 import androidx.lifecycle.ViewModel
+import com.example.fatfoxhospital.pr07.model.Nurse
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 

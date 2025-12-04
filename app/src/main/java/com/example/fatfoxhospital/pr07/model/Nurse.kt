@@ -1,4 +1,4 @@
-package com.example.fatfoxhospital.pr07
+package com.example.fatfoxhospital.pr07.model
 
 data class Nurse(
     val id: Long,

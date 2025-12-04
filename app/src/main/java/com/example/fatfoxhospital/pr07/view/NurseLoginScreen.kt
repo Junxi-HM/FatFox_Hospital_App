@@ -1,4 +1,4 @@
-package com.example.fatfoxhospital.pr07
+package com.example.fatfoxhospital.pr07.view
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.fatfoxhospital.R
+import com.example.fatfoxhospital.pr07.viewmodel.NurseViewModel
 
 @Composable
 fun NurseLoginScreen(viewModel: NurseViewModel, navController: NavHostController) {

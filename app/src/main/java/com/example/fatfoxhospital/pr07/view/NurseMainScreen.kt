@@ -1,4 +1,4 @@
-package com.example.fatfoxhospital.pr07
+package com.example.fatfoxhospital.pr07.view
 
 import android.os.Bundle
 import androidx.activity.compose.setContent
@@ -95,7 +95,9 @@ val mockScreens = listOf(
 fun ScreenItem(navController: NavHostController, screen: Screen, modifier: Modifier = Modifier) {
     ElevatedCard(
         onClick = {
-            navController.navigate(screen.screen)
+            navController.navigate(screen.screen) {
+                popUpTo("Main") { inclusive = true }
+            }
         },
         modifier = modifier
             .fillMaxWidth(),
@@ -175,7 +177,9 @@ fun NurseMainScreenContent(navController: NavHostController, screens: List<Scree
         ) {
             IconButton(
                 onClick = {
-                    navController.navigate("Main")
+                    navController.navigate("Main") {
+                        popUpTo("Main") { inclusive = true }
+                    }
                 },
                 modifier = Modifier.size(48.dp)
             ) {

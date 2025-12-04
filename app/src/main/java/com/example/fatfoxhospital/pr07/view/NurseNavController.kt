@@ -1,10 +1,11 @@
-package com.example.fatfoxhospital.pr07
+package com.example.fatfoxhospital.pr07.view
 
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.fatfoxhospital.pr07.viewmodel.NurseViewModel
 
 @Composable
 fun NurseNavController() {
