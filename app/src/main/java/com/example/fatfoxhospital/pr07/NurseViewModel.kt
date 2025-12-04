@@ -21,7 +21,7 @@ class NurseViewModel : ViewModel() {
     }
 
     fun addNurse(nurse: Nurse) {
-        _nurses.value = _nurses.value + nurse
+        _nurses.value += nurse
     }
 
     fun validateNurseLogin(username: String, password: String): Boolean {
