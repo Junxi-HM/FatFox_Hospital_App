@@ -1,28 +1,32 @@
-package com.example.fatfoxhospital.pr07
+package com.example.fatfoxhospital.pr07.ui.screens.register
 
+import androidx.compose.foundation.Image // New import for logo
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.fatfoxhospital.R
+import com.example.fatfoxhospital.pr07.ui.viewmodel.NurseViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NurseRegistrationScreen(
     // NavController inyectado para gestionar la navegación
     navController: NavController,
-    viewModel: NurseRegistrationViewModel = viewModel()
+    viewModel: NurseViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -32,12 +36,13 @@ fun NurseRegistrationScreen(
         if (uiState.isRegistrationSuccessful) {
             // Muestra mensaje de éxito antes de redirigir
             snackbarHostState.showSnackbar("Registro exitoso. Redirigiendo a Iniciar Sesión...")
-/*
-            // Navega a la pantalla de Login y borra la pantalla de registro de la pila
-            navController.navigate(Screen.Login.route) {
-                popUpTo(Screen.Home.route) { inclusive = false }
+
+            // 2.3 After successful registration, redirect to the login page
+            navController.navigate("login") {
+                // Remove the registration screen from the back stack
+                popUpTo("nurse_registration") { inclusive = true }
             }
-*/
+
             viewModel.registrationComplete() // Reinicia el estado para futuras navegaciones
         }
     }
@@ -52,20 +57,7 @@ fun NurseRegistrationScreen(
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
-        topBar = {
-            TopAppBar(
-                title = { Text("Registro de Enfermero") },
-                navigationIcon = {
-                    // Botón para volver a la página de inicio
-/*
-                    IconButton(onClick = { navController.popBackStack(Screen.Home.route, inclusive = false) }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver a Inicio")
-                    }
-
- */
-                }
-            )
-        }
+        // TopAppBar removed to modify style
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -75,6 +67,31 @@ fun NurseRegistrationScreen(
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            // 2.1 Modify the style, It will have the same logo as the main screen.
+            // 2.2 Click the logo to return to the main screen.
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 32.dp)
+                    // Implement click to return to the main screen
+                    .clickable { navController.navigate("main") { popUpTo("main") { inclusive = true } } }
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.logo),
+                    contentDescription = "Logo Hospital",
+                    modifier = Modifier.size(72.dp)
+                )
+                Spacer(modifier = Modifier.width(12.dp))
+                Text(
+                    text = "Gestor Hospitalario",
+                    style = MaterialTheme.typography.headlineLarge.copy(
+                        fontWeight = FontWeight.ExtraBold,
+                        letterSpacing = (-0.5).sp
+                    )
+                )
+            }
+
             Text(
                 text = "Crear Cuenta de Enfermero",
                 style = MaterialTheme.typography.headlineMedium,
@@ -142,12 +159,10 @@ fun NurseRegistrationScreen(
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.clickable {
-                    // Navega a la pantalla de Login y borra la actual de la pila
-/*
-                    navController.navigate(Screen.Login.route) {
-                        popUpTo(Screen.NurseRegistration.route) { inclusive = true }
+                    // 2.1. Navigate to "Already have an account? Log in" to the login page.
+                    navController.navigate("login") {
+                        popUpTo("nurse_registration") { inclusive = true }
                     }
- */
                 }
             )
         }

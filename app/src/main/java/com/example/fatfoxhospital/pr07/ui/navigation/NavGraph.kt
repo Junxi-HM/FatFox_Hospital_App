@@ -10,7 +10,9 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.fatfoxhospital.pr07.ui.screens.detail.NurseDetailScreen
 import com.example.fatfoxhospital.pr07.ui.screens.home.HomeScreen
+import com.example.fatfoxhospital.pr07.ui.screens.home.MainScreen
 import com.example.fatfoxhospital.pr07.ui.screens.list.NurseListScreen
+import com.example.fatfoxhospital.pr07.ui.screens.register.NurseRegistrationScreen
 import com.example.fatfoxhospital.pr07.ui.screens.search.SearchScreen
 import com.example.fatfoxhospital.pr07.ui.viewmodel.NurseViewModel
 
@@ -18,13 +20,29 @@ import com.example.fatfoxhospital.pr07.ui.viewmodel.NurseViewModel
 fun NavGraph(viewModel: NurseViewModel) {
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = "home") {
+    NavHost(navController = navController, startDestination = "main") {
+        composable("main") {
+            MainScreen(
+                onNavigateToNurseRegistration = { navController.navigate("nurse_registration") },
+                onNavigateToLogin = { navController.navigate("login") } //
+            )
+        }
+
         composable("home") {
             HomeScreen(
                 onNavigateToSearch = { navController.navigate("search") },
                 onNavigateToNurseList = { navController.navigate("nurse_list") }
             )
         }
+
+        composable("nurse_registration") {
+            NurseRegistrationScreen(
+                navController = navController,
+                viewModel = viewModel
+            )
+        }
+
+
 
         composable("search") {
             SearchScreen(
