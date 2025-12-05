@@ -1,4 +1,4 @@
-package com.example.fatfoxhospital.pr07.ui.screens.home
+package com.example.fatfoxhospital.pr07.view.screens.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

@@ -1,30 +1,33 @@
-package com.example.fatfoxhospital.pr07.ui.navigation
+package com.example.fatfoxhospital.pr07.view.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.fatfoxhospital.pr07.ui.screens.detail.NurseDetailScreen
-import com.example.fatfoxhospital.pr07.ui.screens.home.HomeScreen
-import com.example.fatfoxhospital.pr07.ui.screens.home.MainScreen
-import com.example.fatfoxhospital.pr07.ui.screens.list.NurseListScreen
-import com.example.fatfoxhospital.pr07.ui.screens.register.NurseRegistrationScreen
-import com.example.fatfoxhospital.pr07.ui.screens.search.SearchScreen
-import com.example.fatfoxhospital.pr07.ui.viewmodel.NurseViewModel
+import com.example.fatfoxhospital.pr07.view.screens.detail.NurseDetailScreen
+import com.example.fatfoxhospital.pr07.view.screens.home.HomeScreen
+import com.example.fatfoxhospital.pr07.view.screens.home.MainScreen
+import com.example.fatfoxhospital.pr07.view.screens.list.NurseListScreen
+import com.example.fatfoxhospital.pr07.view.screens.login.NurseLoginScreen
+import com.example.fatfoxhospital.pr07.view.screens.register.NurseRegistrationScreen
+import com.example.fatfoxhospital.pr07.view.screens.search.SearchScreen
+import com.example.fatfoxhospital.pr07.viewmodel.NurseViewModel
 
 @Composable
-fun NavGraph(viewModel: NurseViewModel) {
+fun NavGraph() {
+    val viewModel: NurseViewModel = viewModel()
     val navController = rememberNavController()
 
     NavHost(navController = navController, startDestination = "main") {
         composable("main") {
             MainScreen(
                 onNavigateToNurseRegistration = { navController.navigate("nurse_registration") },
-                onNavigateToLogin = { navController.navigate("login") } //
+                onNavigateToLogin = { navController.navigate("login") }
             )
         }
 
@@ -42,7 +45,9 @@ fun NavGraph(viewModel: NurseViewModel) {
             )
         }
 
-
+        composable("login") {
+            NurseLoginScreen(viewModel, navController)
+        }
 
         composable("search") {
             SearchScreen(
