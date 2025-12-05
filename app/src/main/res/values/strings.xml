@@ -23,5 +23,5 @@
     <!-- Nurse Login Screen -->
     <string name="nurse_login_title">Login</string>
     <string name="nurse_login_title_capital_letters">LOGIN</string>
-    <string name="back_to_main_text">BACK TO MAIN</string>
+    <string name="back_to_home_text">BACK TO HOME</string>
 </resources>

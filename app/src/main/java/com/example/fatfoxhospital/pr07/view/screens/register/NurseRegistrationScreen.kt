@@ -1,4 +1,4 @@
-package com.example.fatfoxhospital.pr07.ui.screens.register
+package com.example.fatfoxhospital.pr07.view.screens.register
 
 import androidx.compose.foundation.Image // New import for logo
 import androidx.compose.foundation.clickable
@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.fatfoxhospital.R
-import com.example.fatfoxhospital.pr07.ui.viewmodel.NurseViewModel
+import com.example.fatfoxhospital.pr07.viewmodel.NurseViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -75,7 +75,13 @@ fun NurseRegistrationScreen(
                     .fillMaxWidth()
                     .padding(bottom = 32.dp)
                     // Implement click to return to the main screen
-                    .clickable { navController.navigate("main") { popUpTo("main") { inclusive = true } } }
+                    .clickable {
+                        navController.navigate("main") {
+                            popUpTo("main") {
+                                inclusive = true
+                            }
+                        }
+                    }
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.logo),
@@ -103,14 +109,18 @@ fun NurseRegistrationScreen(
                 value = uiState.name,
                 onValueChange = viewModel::updateName,
                 label = { Text("Nombre") },
-                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
             )
 
             OutlinedTextField(
                 value = uiState.surname,
                 onValueChange = viewModel::updateSurname,
                 label = { Text("Apellido") },
-                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
             )
 
             // Correo Electrónico (Con KeyboardType.Email)
@@ -119,7 +129,9 @@ fun NurseRegistrationScreen(
                 onValueChange = viewModel::updateEmail,
                 label = { Text("Correo Electrónico") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
             )
 
             // Nombre de Usuario
@@ -127,7 +139,9 @@ fun NurseRegistrationScreen(
                 value = uiState.username,
                 onValueChange = viewModel::updateUsername,
                 label = { Text("Nombre de Usuario") },
-                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
             )
 
             // Contraseña (Oculta y con KeyboardType.Password)
@@ -137,7 +151,9 @@ fun NurseRegistrationScreen(
                 label = { Text("Contraseña") },
                 visualTransformation = PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
             )
 
             Spacer(modifier = Modifier.height(32.dp))
@@ -146,7 +162,9 @@ fun NurseRegistrationScreen(
             Button(
                 onClick = viewModel::registerNurse,
                 enabled = !uiState.isRegistrationSuccessful,
-                modifier = Modifier.fillMaxWidth().height(50.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp)
             ) {
                 Text("REGISTRAR CUENTA")
             }

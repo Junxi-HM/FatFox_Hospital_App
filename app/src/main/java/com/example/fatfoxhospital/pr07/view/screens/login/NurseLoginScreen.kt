@@ -1,4 +1,4 @@
-package com.example.fatfoxhospital.pr07.view
+package com.example.fatfoxhospital.pr07.view.screens.login
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
@@ -110,12 +110,12 @@ fun NurseLoginScreen(viewModel: NurseViewModel, navController: NavHostController
 
                 Button(
                     onClick = {
-                        val isValidUser = viewModel.validateNurseLogin(username, password)
+                        val isValidUser = viewModel.authenticate(username, password)
 
                         if (isValidUser) {
                             Toast.makeText(context, "Login Successful", Toast.LENGTH_SHORT).show()
-                            navController.navigate("Main") {
-                                popUpTo("Login") { inclusive = true }
+                            navController.navigate("home") {
+                                popUpTo("login") { inclusive = true }
                             }
                         } else {
                             Toast.makeText(context, "Login Failed", Toast.LENGTH_SHORT).show()
@@ -147,7 +147,7 @@ fun NurseLoginScreen(viewModel: NurseViewModel, navController: NavHostController
                     shape = RoundedCornerShape(5.dp),
                 ) {
                     Text(
-                        text = stringResource(R.string.back_to_main_text),
+                        text = stringResource(R.string.back_to_home_text),
                         fontSize = 15.sp,
                         color = colorResource(
                             id = R.color.black

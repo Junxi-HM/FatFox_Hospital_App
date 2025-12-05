@@ -1,10 +1,5 @@
-package com.example.fatfoxhospital.pr07.ui.screens.search
+package com.example.fatfoxhospital.pr07.view.screens.search
 
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -24,8 +19,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.fatfoxhospital.pr07.data.model.Nurse
-import com.example.fatfoxhospital.pr07.ui.viewmodel.NurseViewModel
+import com.example.fatfoxhospital.pr07.model.Nurse
+import com.example.fatfoxhospital.pr07.viewmodel.NurseViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
