@@ -13,9 +13,11 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.fatfoxhospital.R
 import com.example.fatfoxhospital.pr07.viewmodel.NurseViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -37,13 +39,13 @@ fun NurseDetailScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Detalles de Enfermera") },
+                title = { Text(stringResource(R.string.nurse_detail_title)) },
                 navigationIcon = {
                     IconButton(onClick = {
                         viewModel.clearSelectedNurse()
                         onBack()
                     }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "Volver")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.back_icon_desc))
                     }
                 }
             )
@@ -89,11 +91,16 @@ fun NurseDetailScreen(
                     )
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
-                        DetailRow("Usuario", nurse.user)
+                        DetailRow(stringResource(R.string.id_label), "#${nurse.id}")
                         Spacer(modifier = Modifier.height(8.dp))
-                        DetailRow("ID", "#${nurse.id}")
+                        DetailRow(stringResource(R.string.username_detail_label), nurse.user)
+                        Spacer(modifier = Modifier.height(8.dp))
+                        DetailRow(stringResource(R.string.email_detail_label), nurse.email)
+                        Spacer(modifier = Modifier.height(8.dp))
                     }
                 }
+
+                Spacer(modifier = Modifier.height(24.dp))
 
                 Spacer(modifier = Modifier.height(24.dp))
 
@@ -103,7 +110,7 @@ fun NurseDetailScreen(
                     shape = MaterialTheme.shapes.large
                 ) {
                     Text(
-                        "Contactar Enfermera",
+                        stringResource(R.string.contact_nurse_button),
                         modifier = Modifier.padding(vertical = 8.dp)
                     )
                 }
@@ -114,7 +121,7 @@ fun NurseDetailScreen(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    "Enfermera no encontrada",
+                    text = stringResource(R.string.nurse_not_found),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.error
                 )

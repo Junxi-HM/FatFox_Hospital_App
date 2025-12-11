@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">FatFox Hospital PR07</string>
+    <string name="app_name">FatFox Hospital</string>
     <string name="hospital_manager">Gestor Hospitalario</string>
     <string name="hospital_icon_desc">Icono del Hospital</string>
     <string name="login_screen_title">Iniciar Sesión</string>
@@ -24,4 +24,69 @@
     <string name="nurse_login_title">Login</string>
     <string name="nurse_login_title_capital_letters">LOGIN</string>
     <string name="back_to_home_text">BACK TO HOME</string>
+
+    <!-- SearchScreen -->
+    <string name="nurse_directory_title">Nurse Directory</string>
+    <string name="quick_search">Quick Search</string>
+    <string name="search_placeholder_nurse">Search nurse...</string>
+    <string name="start_typing_to_search">Start typing to search</string>
+    <string name="no_nurses_found_search">No nurses found</string>
+    <string name="found_one_nurse_search">Found 1 nurse</string>
+    <string name="found_many_nurses_search">Found %d nurses</string>
+    <string name="try_another_term">Try another term</string>
+
+    <!-- Empty state in SearchScreen -->
+    <string name="no_results_title">No nurses found</string>
+    <string name="no_results_subtitle">Try another term</string>
+
+    <!-- NurseListScreen -->
+    <string name="all_nurses_title">All Nurses</string>
+    <string name="username_label">Username: %s</string>
+
+    <!-- Back button content description (shared) -->
+    <string name="back_button">Back</string>
+
+    <!-- NurseRegistrationScreen -->
+    <string name="hospital_manager_title">Hospital Manager</string>
+    <string name="create_nurse_account">Create Nurse Account</string>
+    <string name="name_label">Name</string>
+    <string name="surname_label">Surname</string>
+    <string name="email_label">Email Address</string>
+    <string name="username_label_registration">Username</string>
+    <string name="password_label">Password</string>
+    <string name="register_button">REGISTER ACCOUNT</string>
+    <string name="already_have_account">Already have an account? Log in</string>
+    <string name="registration_success_snackbar">Registration successful. Redirecting to Login...</string>
+    <string name="logo_description">Hospital Logo</string>
+
+    <!-- MainScreen -->
+    <string name="nurse_registration_title">Nurse Registration</string>
+    <string name="nurse_registration_desc">Create a new nurse</string>
+    <string name="login_title">Log In</string>
+    <string name="login_desc">Access your account</string>
+
+    <!-- HomeScreen -->
+    <string name="nurse_search_title">Nurse Search</string>
+    <string name="nurse_search_desc">Search by name, surname or username</string>
+    <string name="full_list_title">Full List</string>
+    <string name="full_list_desc">View all nurses</string>
+
+    <!-- NurseLoginScreen -->
+    <string name="user_label">User</string>
+    <string name="password_label_login">Password</string>
+    <string name="login_success_toast">Login Successful</string>
+    <string name="login_failed_toast">Login Failed</string>
+    <string name="user_icon_desc">User Icon</string>
+    <string name="lock_icon_desc">Lock Icon</string>
+
+    <!-- NurseDetailScreen -->
+    <string name="nurse_detail_title">Nurse Details</string>
+    <string name="back_icon_desc">Back</string>
+    <string name="id_label">ID</string>
+    <string name="username_detail_label">Username</string>
+    <string name="email_detail_label">Email</string>
+    <string name="contact_nurse_button">Contact Nurse</string>
+    <string name="nurse_not_found">Nurse not found</string>
+
+    <string name="select_profile_picture_button">Change Profile Photo</string>
 </resources>

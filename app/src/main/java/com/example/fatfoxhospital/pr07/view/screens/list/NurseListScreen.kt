@@ -14,9 +14,11 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.fatfoxhospital.R
 import com.example.fatfoxhospital.pr07.model.Nurse
 import com.example.fatfoxhospital.pr07.viewmodel.NurseViewModel
 
@@ -34,13 +36,13 @@ fun NurseListScreen(
             TopAppBar(
                 title = {
                     Text(
-                        "Todas las Enfermeras",
+                        stringResource(R.string.all_nurses_title),
                         fontWeight = FontWeight.Bold
                     )
                 },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "Volver")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.back_button))
                     }
                 }
             )
@@ -107,7 +109,7 @@ fun NurseItem(nurse: Nurse, onClick: () -> Unit) {
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "Usuario: ${nurse.user}",
+                    text = stringResource(R.string.username_label, nurse.user),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

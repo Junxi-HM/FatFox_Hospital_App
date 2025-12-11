@@ -6,6 +6,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.example.fatfoxhospital.R
 import com.example.fatfoxhospital.pr07.model.Nurse
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,6 +19,8 @@ data class RegistrationUiState(
     val email: String = "",
     val username: String = "",
     val password: String = "",
+    // Usamos R.drawable.logo como valor por defecto/placeholder
+    val profileResId: Int = R.drawable.logo,
     val errorMessage: String? = null,
     val isRegistrationSuccessful: Boolean = false
 )
@@ -43,6 +46,7 @@ class NurseViewModel(application: Application) : AndroidViewModel(application) {
 
     private val existingEmails = listOf("alice.johnson@fatfox.com", "bob.smith@fatfox.com")
     private val existingUsers = listOf("alice.j", "bob.s")
+
     fun updateSearchQuery(query: String) {
         _searchQuery.value = query
         _searchResults.value = filterNurses(query)
@@ -82,11 +86,16 @@ class NurseViewModel(application: Application) : AndroidViewModel(application) {
         _uiState.value = _uiState.value.copy(password = newPassword, errorMessage = null)
     }
 
+    // Función para actualizar el ID del recurso de la foto de perfil
+    fun updateProfileResId(newResId: Int) {
+        _uiState.value = _uiState.value.copy(profileResId = newResId, errorMessage = null)
+    }
+
     fun registerNurse() {
         viewModelScope.launch {
             val state = _uiState.value
 
-            // 1. Validaciones
+            // 1. Validations
             if (state.name.isBlank() || state.surname.isBlank() || state.email.isBlank() || state.username.isBlank() || state.password.isBlank()) {
                 _uiState.value =
                     state.copy(errorMessage = "Error: Todos los campos son obligatorios.")
@@ -98,17 +107,39 @@ class NurseViewModel(application: Application) : AndroidViewModel(application) {
                 return@launch
             }
 
-            if (existingEmails.any { it.equals(state.email, ignoreCase = true) }) {
+            // Check against current list of nurses for email and username duplicates
+            val currentNurses = _nurses.value ?: emptyList()
+
+            if (currentNurses.any { it.email.equals(state.email, ignoreCase = true) }) {
                 _uiState.value = state.copy(errorMessage = "Error: Correo ya registrado.")
                 return@launch
             }
 
-            if (existingUsers.any { it.equals(state.username, ignoreCase = true) }) {
+            if (currentNurses.any { it.user.equals(state.username, ignoreCase = true) }) {
                 _uiState.value = state.copy(errorMessage = "Error: Usuario ya existe.")
                 return@launch
             }
 
-            // 2. Éxito
+
+            // Generate a new ID (simple increment based on current size/max ID)
+            val newId = (currentNurses.maxOfOrNull { it.id } ?: 0) + 1
+
+            // Create the new Nurse object
+            val newNurse = Nurse(
+                id = newId,
+                name = state.name.trim(),
+                surname = state.surname.trim(),
+                email = state.email.trim(),
+                user = state.username.trim(),
+                password = state.password,
+                profileResId = state.profileResId // Usa el ID de recurso de la foto
+            )
+
+            // Add the new nurse to the list
+            _nurses.value = currentNurses + newNurse
+            numberNurses = _nurses.value?.size?.toLong() ?: 0L
+
+            // 2. Success
             _uiState.value = state.copy(isRegistrationSuccessful = true)
         }
     }
@@ -132,13 +163,14 @@ class NurseViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     private fun getMockNurses(): List<Nurse> = listOf(
-        Nurse(1, "Alice", "Johnson", "alice.johnson@fatfox.com", "alice.j", "pass123"),
-        Nurse(2, "Alina", "Kovacs", "alina.kovacs@fatfox.com", "alina.k", "qwerty"),
-        Nurse(3, "Bob", "Smith", "bob.smith@fatfox.com", "bob.s", "abc123"),
-        Nurse(4, "Charlie", "Brown", "charlie.brown@fatfox.com", "charlie.b", "password123"),
-        Nurse(5, "David", "Lee", "david.lee@fatfox.com", "david.l", "letmein"),
-        Nurse(6, "Emma", "Wilson", "emma.wilson@fatfox.com", "emma.w", "secure456"),
-        Nurse(7, "Fiona", "Garcia", "fiona.garcia@fatfox.com", "fiona.g", "medical789"),
-        Nurse(8, "George", "Miller", "george.miller@fatfox.com", "george.m", "hospital321")
+        // Modificado: Añadido el profileResId
+        Nurse(1, "Alice", "Johnson", "alice.johnson@fatfox.com", "alice.j", "pass123", R.drawable.perfil1),
+        Nurse(2, "Alina", "Kovacs", "alina.kovacs@fatfox.com", "alina.k", "qwerty", R.drawable.perfil2),
+        Nurse(3, "Bob", "Smith", "bob.smith@fatfox.com", "bob.s", "abc123", R.drawable.perfil3),
+        Nurse(4, "Charlie", "Brown", "charlie.brown@fatfox.com", "charlie.b", "password123", R.drawable.perfil2),
+        Nurse(5, "David", "Lee", "david.lee@fatfox.com", "david.l", "letmein", R.drawable.perfil7),
+        Nurse(6, "Emma", "Wilson", "emma.wilson@fatfox.com", "emma.w", "secure456", R.drawable.perfil5),
+        Nurse(7, "Fiona", "Garcia", "fiona.garcia@fatfox.com", "fiona.g", "medical789", R.drawable.perfil5),
+        Nurse(8, "George", "Miller", "george.miller@fatfox.com", "george.m", "hospital321", R.drawable.perfil1)
     )
 }

@@ -27,14 +27,16 @@ fun NavGraph() {
         composable("main") {
             MainScreen(
                 onNavigateToNurseRegistration = { navController.navigate("nurse_registration") },
-                onNavigateToLogin = { navController.navigate("login") }
+                onNavigateToLogin = { navController.navigate("login") },
+                onNavigateToMain = { navController.navigate("main") }
             )
         }
 
         composable("home") {
             HomeScreen(
                 onNavigateToSearch = { navController.navigate("search") },
-                onNavigateToNurseList = { navController.navigate("nurse_list") }
+                onNavigateToNurseList = { navController.navigate("nurse_list") },
+                onNavigateToHome = { navController.navigate("home") }
             )
         }
 

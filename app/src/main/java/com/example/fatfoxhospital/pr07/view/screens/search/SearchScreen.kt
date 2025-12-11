@@ -16,9 +16,11 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.fatfoxhospital.R
 import com.example.fatfoxhospital.pr07.model.Nurse
 import com.example.fatfoxhospital.pr07.viewmodel.NurseViewModel
 
@@ -37,9 +39,9 @@ fun SearchScreen(
             TopAppBar(
                 title = {
                     Column {
-                        Text("Directorio de Enfermeras")
+                        Text(stringResource(R.string.nurse_directory_title))
                         Text(
-                            "Búsqueda rápida",
+                            stringResource(R.string.quick_search),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -47,7 +49,7 @@ fun SearchScreen(
                 },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "Volver")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.back_button))
                     }
                 }
             )
@@ -103,7 +105,7 @@ private fun SearchBar(
     TextField(
         value = query,
         onValueChange = onQueryChange,
-        placeholder = { Text("Buscar enfermera...") },
+        placeholder = { Text(stringResource(R.string.search_placeholder_nurse)) },
         leadingIcon = {
             Icon(
                 Icons.Default.Search,
@@ -116,7 +118,7 @@ private fun SearchBar(
                 IconButton(onClick = { onQueryChange("") }) {
                     Icon(
                         Icons.Default.Clear,
-                        contentDescription = "Limpiar",
+                        contentDescription = stringResource(R.string.clear),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
@@ -139,10 +141,10 @@ private fun SearchBar(
 @Composable
 private fun ResultsCount(count: Int, isQueryBlank: Boolean) {
     val text = when {
-        isQueryBlank -> "Empieza a escribir para buscar"
-        count == 0 -> "No se encontraron enfermeras"
-        count == 1 -> "Encontrada 1 enfermera"
-        else -> "Encontradas $count enfermeras"
+        isQueryBlank -> stringResource(R.string.start_typing_to_search)
+        count == 0 -> stringResource(R.string.no_nurses_found_search)
+        count == 1 -> stringResource(R.string.found_one_nurse_search)
+        else -> stringResource(R.string.found_many_nurses_search, count)
     }
 
     Text(
@@ -219,13 +221,13 @@ private fun EmptySearchState() {
         )
         Spacer(modifier = Modifier.height(36.dp))
         Text(
-            text = "No se encontraron enfermeras",
+            text = stringResource(R.string.no_results_title),
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.SemiBold
         )
         Spacer(modifier = Modifier.height(12.dp))
         Text(
-            text = "Intenta con otro término",
+            text = stringResource(R.string.no_results_subtitle),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )

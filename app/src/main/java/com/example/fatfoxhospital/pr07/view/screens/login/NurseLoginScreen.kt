@@ -31,7 +31,8 @@ fun NurseLoginScreen(viewModel: NurseViewModel, navController: NavHostController
 
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-
+    val loginSuccessMessage = stringResource(R.string.login_success_toast)
+    val loginFailedMessage = stringResource(R.string.login_failed_toast)
     val context = LocalContext.current
 
     Box(
@@ -70,11 +71,11 @@ fun NurseLoginScreen(viewModel: NurseViewModel, navController: NavHostController
                 OutlinedTextField(
                     value = username,
                     onValueChange = { username = it },
-                    label = { Text("User", fontSize = 15.sp) },
+                    label = { Text(stringResource(R.string.user_label), fontSize = 15.sp) },
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Default.Person,
-                            contentDescription = "User Icon",
+                            contentDescription = stringResource(R.string.user_icon_desc),
                             tint = colorResource(id = R.color.lavender)
                         )
                     },
@@ -89,12 +90,12 @@ fun NurseLoginScreen(viewModel: NurseViewModel, navController: NavHostController
                 OutlinedTextField(
                     value = password,
                     onValueChange = { password = it },
-                    label = { Text("Password", fontSize = 15.sp) },
+                    label = { Text(stringResource(R.string.password_label_login), fontSize = 15.sp) },
                     visualTransformation = PasswordVisualTransformation(),
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Default.Lock,
-                            contentDescription = "Lock Icon",
+                            contentDescription = stringResource(R.string.lock_icon_desc),
                             tint = colorResource(id = R.color.lavender)
                         )
                     },
@@ -113,12 +114,12 @@ fun NurseLoginScreen(viewModel: NurseViewModel, navController: NavHostController
                         val isValidUser = viewModel.authenticate(username, password)
 
                         if (isValidUser) {
-                            Toast.makeText(context, "Login Successful", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, loginSuccessMessage, Toast.LENGTH_SHORT).show()
                             navController.navigate("home") {
                                 popUpTo("login") { inclusive = true }
                             }
                         } else {
-                            Toast.makeText(context, "Login Failed", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, loginFailedMessage, Toast.LENGTH_SHORT).show()
                         }
                     },
                     modifier = Modifier
@@ -132,9 +133,7 @@ fun NurseLoginScreen(viewModel: NurseViewModel, navController: NavHostController
                     Text(
                         text = stringResource(R.string.nurse_login_title_capital_letters),
                         fontSize = 20.sp,
-                        color = colorResource(
-                            id = R.color.black
-                        ),
+                        color = colorResource(id = R.color.black)
                     )
                 }
 
