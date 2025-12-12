@@ -1,5 +1,6 @@
 package com.example.fatfoxhospital.pr07.view.screens.search
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -16,6 +17,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -172,21 +174,16 @@ private fun NurseCard(nurse: Nurse, onClick: () -> Unit) {
                 .padding(20.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Box(
-                contentAlignment = Alignment.Center,
+            Image(
+                painter = painterResource(id = nurse.profileResId),
+                contentDescription = "Foto de perfil de ${nurse.name} ${nurse.surname}",
                 modifier = Modifier
                     .size(60.dp)
                     .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.primary)
-            ) {
-                Text(
-                    text = "${nurse.name.first()}${nurse.surname.first()}",
-                    fontWeight = FontWeight.ExtraBold,
-                    fontSize = 22.sp,
-                    color = MaterialTheme.colorScheme.onPrimary
-                )
-            }
+            )
+
             Spacer(modifier = Modifier.width(16.dp))
+
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = "${nurse.name} ${nurse.surname}",

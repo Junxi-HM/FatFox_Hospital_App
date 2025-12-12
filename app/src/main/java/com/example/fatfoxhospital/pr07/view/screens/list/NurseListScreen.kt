@@ -1,5 +1,6 @@
 package com.example.fatfoxhospital.pr07.view.screens.list
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -14,6 +15,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -80,24 +82,14 @@ fun NurseItem(nurse: Nurse, onClick: () -> Unit) {
                 .padding(20.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Box(
-                contentAlignment = Alignment.Center,
+            // 修改这里：加载护士的profile图片而不是显示首字母
+            Image(
+                painter = painterResource(id = nurse.profileResId),
+                contentDescription = "Foto de perfil de ${nurse.name} ${nurse.surname}",
                 modifier = Modifier
                     .size(56.dp)
                     .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.primary)
-            ) {
-                val initials = if (nurse.name.isNotEmpty() && nurse.surname.isNotEmpty()) {
-                    "${nurse.name.first()}${nurse.surname.first()}"
-                } else "?"
-
-                Text(
-                    text = initials,
-                    fontWeight = FontWeight.ExtraBold,
-                    fontSize = 20.sp,
-                    color = MaterialTheme.colorScheme.onPrimary
-                )
-            }
+            )
 
             Spacer(modifier = Modifier.width(20.dp))
 

@@ -1,5 +1,6 @@
 package com.example.fatfoxhospital.pr07.view.screens.detail
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -13,6 +14,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -59,20 +61,13 @@ fun NurseDetailScreen(
                     .padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Box(
-                    contentAlignment = Alignment.Center,
+                Image(
+                    painter = painterResource(id = nurse.profileResId),
+                    contentDescription = "Foto de perfil de ${nurse.name} ${nurse.surname}",
                     modifier = Modifier
                         .size(120.dp)
                         .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.primary)
-                ) {
-                    Text(
-                        text = "${nurse.name.first()}${nurse.surname.first()}",
-                        fontWeight = FontWeight.ExtraBold,
-                        fontSize = 40.sp,
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
-                }
+                )
 
                 Spacer(modifier = Modifier.height(24.dp))
 
