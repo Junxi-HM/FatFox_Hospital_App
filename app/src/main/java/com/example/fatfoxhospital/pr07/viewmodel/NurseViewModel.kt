@@ -73,7 +73,7 @@ class NurseViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     // LOGIN
-    fun login_authenticate(username: String, password: String): Boolean {
+    fun loginAuthenticate(username: String, password: String): Boolean {
         return _nurses.value?.any {
             it.user == username && it.password == password
         } ?: false
