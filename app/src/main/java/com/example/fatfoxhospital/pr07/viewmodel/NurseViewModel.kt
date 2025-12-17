@@ -47,11 +47,23 @@ class NurseViewModel(application: Application) : AndroidViewModel(application) {
     private val existingEmails = listOf("alice.johnson@fatfox.com", "bob.smith@fatfox.com")
     private val existingUsers = listOf("alice.j", "bob.s")
 
+    // SEARCH
     fun updateSearchQuery(query: String) {
         _searchQuery.value = query
         _searchResults.value = filterNurses(query)
     }
 
+    private fun filterNurses(query: String): List<Nurse> {
+        if (query.isBlank()) return emptyList()
+        val lowerQuery = query.lowercase()
+        return _nurses.value?.filter {
+            it.name.lowercase().contains(lowerQuery) ||
+                    it.surname.lowercase().contains(lowerQuery) ||
+                    it.user.lowercase().contains(lowerQuery)
+        } ?: emptyList()
+    }
+
+    // DETAIL
     fun selectNurse(nurse: Nurse) {
         _selectedNurse.value = nurse
     }
@@ -60,12 +72,14 @@ class NurseViewModel(application: Application) : AndroidViewModel(application) {
         _selectedNurse.value = null
     }
 
-    fun authenticate(username: String, password: String): Boolean {
+    // LOGIN
+    fun login_authenticate(username: String, password: String): Boolean {
         return _nurses.value?.any {
             it.user == username && it.password == password
         } ?: false
     }
 
+    // REGISTRATION
     fun updateName(newName: String) {
         _uiState.value = _uiState.value.copy(name = newName, errorMessage = null)
     }
@@ -86,7 +100,6 @@ class NurseViewModel(application: Application) : AndroidViewModel(application) {
         _uiState.value = _uiState.value.copy(password = newPassword, errorMessage = null)
     }
 
-    // Función para actualizar el ID del recurso de la foto de perfil
     fun updateProfileResId(newResId: Int) {
         _uiState.value = _uiState.value.copy(profileResId = newResId, errorMessage = null)
     }
@@ -150,16 +163,6 @@ class NurseViewModel(application: Application) : AndroidViewModel(application) {
 
     fun clearErrorMessage() {
         _uiState.value = _uiState.value.copy(errorMessage = null)
-    }
-
-    private fun filterNurses(query: String): List<Nurse> {
-        if (query.isBlank()) return emptyList()
-        val lowerQuery = query.lowercase()
-        return _nurses.value?.filter {
-            it.name.lowercase().contains(lowerQuery) ||
-                    it.surname.lowercase().contains(lowerQuery) ||
-                    it.user.lowercase().contains(lowerQuery)
-        } ?: emptyList()
     }
 
     private fun getMockNurses(): List<Nurse> = listOf(

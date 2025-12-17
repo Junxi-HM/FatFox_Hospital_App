@@ -111,7 +111,7 @@ fun NurseLoginScreen(viewModel: NurseViewModel, navController: NavHostController
 
                 Button(
                     onClick = {
-                        val isValidUser = viewModel.authenticate(username, password)
+                        val isValidUser = viewModel.login_authenticate(username, password)
 
                         if (isValidUser) {
                             Toast.makeText(context, loginSuccessMessage, Toast.LENGTH_SHORT).show()
