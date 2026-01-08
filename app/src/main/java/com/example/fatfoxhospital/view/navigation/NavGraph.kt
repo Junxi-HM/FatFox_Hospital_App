@@ -1,4 +1,4 @@
-package com.example.fatfoxhospital.pr07.view.navigation
+package com.example.fatfoxhospital.view.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -9,14 +9,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.fatfoxhospital.pr07.view.screens.detail.NurseDetailScreen
-import com.example.fatfoxhospital.pr07.view.screens.home.HomeScreen
-import com.example.fatfoxhospital.pr07.view.screens.home.MainScreen
-import com.example.fatfoxhospital.pr07.view.screens.list.NurseListScreen
-import com.example.fatfoxhospital.pr07.view.screens.login.NurseLoginScreen
-import com.example.fatfoxhospital.pr07.view.screens.register.NurseRegistrationScreen
-import com.example.fatfoxhospital.pr07.view.screens.search.SearchScreen
-import com.example.fatfoxhospital.pr07.viewmodel.NurseViewModel
+import com.example.fatfoxhospital.view.screens.detail.NurseDetailScreen
+import com.example.fatfoxhospital.view.screens.home.HomeScreen
+import com.example.fatfoxhospital.view.screens.home.MainScreen
+import com.example.fatfoxhospital.view.screens.list.NurseListScreen
+import com.example.fatfoxhospital.view.screens.login.NurseLoginScreen
+import com.example.fatfoxhospital.view.screens.register.NurseRegistrationScreen
+import com.example.fatfoxhospital.view.screens.search.SearchScreen
+import com.example.fatfoxhospital.viewmodel.NurseViewModel
 
 @Composable
 fun NavGraph() {

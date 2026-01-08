@@ -1,4 +1,4 @@
-package com.example.fatfoxhospital.pr07.view.screens.register
+package com.example.fatfoxhospital.view.screens.register
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.fatfoxhospital.R
-import com.example.fatfoxhospital.pr07.viewmodel.NurseViewModel
+import com.example.fatfoxhospital.viewmodel.NurseViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

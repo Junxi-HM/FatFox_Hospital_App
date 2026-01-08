@@ -1,7 +1,6 @@
-package com.example.fatfoxhospital.pr07.view.screens.detail
+package com.example.fatfoxhospital.view.screens.detail
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -18,9 +17,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.fatfoxhospital.R
-import com.example.fatfoxhospital.pr07.viewmodel.NurseViewModel
+import com.example.fatfoxhospital.viewmodel.NurseViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

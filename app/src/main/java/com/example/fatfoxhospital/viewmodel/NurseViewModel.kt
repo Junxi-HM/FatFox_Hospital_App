@@ -1,4 +1,4 @@
-package com.example.fatfoxhospital.pr07.viewmodel
+package com.example.fatfoxhospital.viewmodel
 
 import android.app.Application
 import android.util.Patterns
@@ -7,7 +7,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.fatfoxhospital.R
-import com.example.fatfoxhospital.pr07.model.Nurse
+import com.example.fatfoxhospital.model.Nurse
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -167,13 +167,61 @@ class NurseViewModel(application: Application) : AndroidViewModel(application) {
 
     private fun getMockNurses(): List<Nurse> = listOf(
         // Modificado: Añadido el profileResId
-        Nurse(1, "Alice", "Johnson", "alice.johnson@fatfox.com", "alice.j", "pass123", R.drawable.perfil1),
-        Nurse(2, "Alina", "Kovacs", "alina.kovacs@fatfox.com", "alina.k", "qwerty", R.drawable.perfil2),
+        Nurse(
+            1,
+            "Alice",
+            "Johnson",
+            "alice.johnson@fatfox.com",
+            "alice.j",
+            "pass123",
+            R.drawable.perfil1
+        ),
+        Nurse(
+            2,
+            "Alina",
+            "Kovacs",
+            "alina.kovacs@fatfox.com",
+            "alina.k",
+            "qwerty",
+            R.drawable.perfil2
+        ),
         Nurse(3, "Bob", "Smith", "bob.smith@fatfox.com", "bob.s", "abc123", R.drawable.perfil3),
-        Nurse(4, "Charlie", "Brown", "charlie.brown@fatfox.com", "charlie.b", "password123", R.drawable.perfil2),
+        Nurse(
+            4,
+            "Charlie",
+            "Brown",
+            "charlie.brown@fatfox.com",
+            "charlie.b",
+            "password123",
+            R.drawable.perfil2
+        ),
         Nurse(5, "David", "Lee", "david.lee@fatfox.com", "david.l", "letmein", R.drawable.perfil7),
-        Nurse(6, "Emma", "Wilson", "emma.wilson@fatfox.com", "emma.w", "secure456", R.drawable.perfil5),
-        Nurse(7, "Fiona", "Garcia", "fiona.garcia@fatfox.com", "fiona.g", "medical789", R.drawable.perfil5),
-        Nurse(8, "George", "Miller", "george.miller@fatfox.com", "george.m", "hospital321", R.drawable.perfil1)
+        Nurse(
+            6,
+            "Emma",
+            "Wilson",
+            "emma.wilson@fatfox.com",
+            "emma.w",
+            "secure456",
+            R.drawable.perfil5
+        ),
+        Nurse(
+            7,
+            "Fiona",
+            "Garcia",
+            "fiona.garcia@fatfox.com",
+            "fiona.g",
+            "medical789",
+            R.drawable.perfil5
+        ),
+        Nurse(
+            8,
+            "George",
+            "Miller",
+            "george.miller@fatfox.com",
+            "george.m",
+            "hospital321",
+            R.drawable.perfil1
+        )
     )
 }
