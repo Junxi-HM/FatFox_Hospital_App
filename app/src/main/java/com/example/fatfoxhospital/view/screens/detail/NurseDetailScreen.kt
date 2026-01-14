@@ -60,7 +60,7 @@ fun NurseDetailScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Image(
-                    painter = painterResource(id = nurse.profileResId),
+                    painter = painterResource(id = NurseViewModel.getResIdFromByte(nurse.profileRes)),
                     contentDescription = "Foto de perfil de ${nurse.name} ${nurse.surname}",
                     modifier = Modifier
                         .size(120.dp)

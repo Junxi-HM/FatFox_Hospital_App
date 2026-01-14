@@ -173,7 +173,7 @@ private fun NurseCard(nurse: Nurse, onClick: () -> Unit) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
-                painter = painterResource(id = nurse.profileResId),
+                painter = painterResource(id = NurseViewModel.getResIdFromByte(nurse.profileRes)),
                 contentDescription = "Foto de perfil de ${nurse.name} ${nurse.surname}",
                 modifier = Modifier
                     .size(60.dp)

@@ -96,8 +96,8 @@ fun NurseRegistrationScreen(
             )
 
             ProfileImageSelector(
-                currentResId = uiState.profileResId,
-                onImageSelected = viewModel::updateProfileResId
+                currentResByte = uiState.profileRes,
+                onImageSelected = viewModel::updateProfileRes
             )
 
             OutlinedTextField(
@@ -178,26 +178,17 @@ fun NurseRegistrationScreen(
 
 @Composable
 private fun ProfileImageSelector(
-    currentResId: Int,
-    onImageSelected: (Int) -> Unit
+    currentResByte: Byte, // 改为接收 Byte
+    onImageSelected: (Byte) -> Unit // 改为回调 Byte
 ) {
-    val profileResources = remember {
-        listOf(
-            R.drawable.perfil1,
-            R.drawable.perfil2,
-            R.drawable.perfil3,
-            R.drawable.perfil4,
-            R.drawable.perfil5,
-            R.drawable.perfil7,
-        )
-    }
+    val resources = NurseViewModel.PROFILE_RESOURCES
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.padding(vertical = 16.dp)
     ) {
         Image(
-            painter = painterResource(id = currentResId),
+            painter = painterResource(id = NurseViewModel.getResIdFromByte(currentResByte)),
             contentDescription = "Foto de perfil",
             modifier = Modifier
                 .size(96.dp)
@@ -206,8 +197,8 @@ private fun ProfileImageSelector(
 
         Button(
             onClick = {
-                val newResId = profileResources.random()
-                onImageSelected(newResId)
+                val nextIndex = (currentResByte + 1) % resources.size
+                onImageSelected(nextIndex.toByte())
             }
         ) {
             Text(stringResource(R.string.select_profile_picture_button))

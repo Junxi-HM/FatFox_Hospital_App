@@ -82,7 +82,7 @@ fun NurseItem(nurse: Nurse, onClick: () -> Unit) {
         ) {
             // 修改这里：加载护士的profile图片而不是显示首字母
             Image(
-                painter = painterResource(id = nurse.profileResId),
+                painter = painterResource(id = NurseViewModel.getResIdFromByte(nurse.profileRes)),
                 contentDescription = "Foto de perfil de ${nurse.name} ${nurse.surname}",
                 modifier = Modifier
                     .size(56.dp)

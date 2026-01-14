@@ -20,7 +20,7 @@ data class RegistrationUiState(
     val username: String = "",
     val password: String = "",
     // Usamos R.drawable.logo como valor por defecto/placeholder
-    val profileResId: Int = R.drawable.logo,
+    val profileRes: Byte = 0,
     val errorMessage: String? = null,
     val isRegistrationSuccessful: Boolean = false
 )
@@ -100,8 +100,8 @@ class NurseViewModel(application: Application) : AndroidViewModel(application) {
         _uiState.value = _uiState.value.copy(password = newPassword, errorMessage = null)
     }
 
-    fun updateProfileResId(newResId: Int) {
-        _uiState.value = _uiState.value.copy(profileResId = newResId, errorMessage = null)
+    fun updateProfileRes(newIndex: Byte) {
+        _uiState.value = _uiState.value.copy(profileRes = newIndex, errorMessage = null)
     }
 
     fun registerNurse() {
@@ -145,7 +145,7 @@ class NurseViewModel(application: Application) : AndroidViewModel(application) {
                 email = state.email.trim(),
                 user = state.username.trim(),
                 password = state.password,
-                profileResId = state.profileResId // Usa el ID de recurso de la foto
+                profileRes = state.profileRes
             )
 
             // Add the new nurse to the list
@@ -165,6 +165,31 @@ class NurseViewModel(application: Application) : AndroidViewModel(application) {
         _uiState.value = _uiState.value.copy(errorMessage = null)
     }
 
+    companion object {
+        val PROFILE_RESOURCES = listOf(
+            R.drawable.perfil1, // 索引 0
+            R.drawable.perfil2, // 索引 1
+            R.drawable.perfil3, // 索引 2
+            R.drawable.perfil4, // 索引 3
+            R.drawable.perfil5, // 索引 4
+            R.drawable.perfil7  // 索引 5
+        )
+
+        // 辅助方法：通过索引获取资源ID
+        fun getResIdFromByte(index: Byte): Int {
+            return PROFILE_RESOURCES.getOrElse(index.toInt()) { R.drawable.logo }
+        }
+
+        // 辅助方法：将资源 ID 转换为 Byte 索引
+        fun getByteFromResId(resId: Int): Byte {
+            val index = PROFILE_RESOURCES.indexOf(resId)
+            return if (index != -1) index.toByte() else 0.toByte()
+        }
+
+    }
+
+
+
     private fun getMockNurses(): List<Nurse> = listOf(
         // Modificado: Añadido el profileResId
         Nurse(
@@ -174,7 +199,7 @@ class NurseViewModel(application: Application) : AndroidViewModel(application) {
             "alice.johnson@fatfox.com",
             "alice.j",
             "pass123",
-            R.drawable.perfil1
+            0
         ),
         Nurse(
             2,
@@ -183,9 +208,9 @@ class NurseViewModel(application: Application) : AndroidViewModel(application) {
             "alina.kovacs@fatfox.com",
             "alina.k",
             "qwerty",
-            R.drawable.perfil2
+            1
         ),
-        Nurse(3, "Bob", "Smith", "bob.smith@fatfox.com", "bob.s", "abc123", R.drawable.perfil3),
+        Nurse(3, "Bob", "Smith", "bob.smith@fatfox.com", "bob.s", "abc123", 2),
         Nurse(
             4,
             "Charlie",
@@ -193,9 +218,9 @@ class NurseViewModel(application: Application) : AndroidViewModel(application) {
             "charlie.brown@fatfox.com",
             "charlie.b",
             "password123",
-            R.drawable.perfil2
+            1
         ),
-        Nurse(5, "David", "Lee", "david.lee@fatfox.com", "david.l", "letmein", R.drawable.perfil7),
+        Nurse(5, "David", "Lee", "david.lee@fatfox.com", "david.l", "letmein", 6),
         Nurse(
             6,
             "Emma",
@@ -203,7 +228,7 @@ class NurseViewModel(application: Application) : AndroidViewModel(application) {
             "emma.wilson@fatfox.com",
             "emma.w",
             "secure456",
-            R.drawable.perfil5
+            4
         ),
         Nurse(
             7,
@@ -212,7 +237,7 @@ class NurseViewModel(application: Application) : AndroidViewModel(application) {
             "fiona.garcia@fatfox.com",
             "fiona.g",
             "medical789",
-            R.drawable.perfil5
+            4
         ),
         Nurse(
             8,
@@ -221,7 +246,7 @@ class NurseViewModel(application: Application) : AndroidViewModel(application) {
             "george.miller@fatfox.com",
             "george.m",
             "hospital321",
-            R.drawable.perfil1
+            0
         )
     )
 }

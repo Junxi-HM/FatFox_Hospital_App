@@ -7,5 +7,5 @@ data class Nurse(
     val email: String,
     val user: String,
     val password: String,
-    val profileResId: Int
+    val profileRes: Byte,
 )
