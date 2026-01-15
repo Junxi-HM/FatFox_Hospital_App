@@ -5,6 +5,9 @@ import retrofit2.Response
 import retrofit2.http.*
 
 interface NurseApiEndpoints {
+    // LIST: @GetMapping("/index")
+    @GET("nurse/index")
+    suspend fun getAll(): List<Nurse>
     // LOGIN: @PostMapping("/login")
     @POST("nurse/login")
     suspend fun login(@Body nurse: Nurse): Response<Boolean>

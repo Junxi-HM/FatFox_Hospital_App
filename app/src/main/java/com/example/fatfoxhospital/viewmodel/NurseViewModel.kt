@@ -1,13 +1,19 @@
 package com.example.fatfoxhospital.viewmodel
 
 import android.app.Application
+import android.util.Log
 import android.util.Patterns
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.fatfoxhospital.R
+import com.example.fatfoxhospital.backend.Connection
 import com.example.fatfoxhospital.model.Nurse
+import com.example.fatfoxhospital.viewmodel.uistate.NurseListUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -46,6 +52,9 @@ class NurseViewModel(application: Application) : AndroidViewModel(application) {
 
     private val existingEmails = listOf("alice.johnson@fatfox.com", "bob.smith@fatfox.com")
     private val existingUsers = listOf("alice.j", "bob.s")
+
+    // LIST
+
 
     // SEARCH
     fun updateSearchQuery(query: String) {
@@ -167,20 +176,18 @@ class NurseViewModel(application: Application) : AndroidViewModel(application) {
 
     companion object {
         val PROFILE_RESOURCES = listOf(
-            R.drawable.perfil1, // 索引 0
-            R.drawable.perfil2, // 索引 1
-            R.drawable.perfil3, // 索引 2
-            R.drawable.perfil4, // 索引 3
-            R.drawable.perfil5, // 索引 4
-            R.drawable.perfil7  // 索引 5
+            R.drawable.perfil1,
+            R.drawable.perfil2,
+            R.drawable.perfil3,
+            R.drawable.perfil4,
+            R.drawable.perfil5,
+            R.drawable.perfil7
         )
 
-        // 辅助方法：通过索引获取资源ID
         fun getResIdFromByte(index: Byte): Int {
             return PROFILE_RESOURCES.getOrElse(index.toInt()) { R.drawable.logo }
         }
 
-        // 辅助方法：将资源 ID 转换为 Byte 索引
         fun getByteFromResId(resId: Int): Byte {
             val index = PROFILE_RESOURCES.indexOf(resId)
             return if (index != -1) index.toByte() else 0.toByte()
@@ -188,7 +195,23 @@ class NurseViewModel(application: Application) : AndroidViewModel(application) {
 
     }
 
+    // Backend
+    // List
+    var nurseListUiState: NurseListUiState by mutableStateOf(NurseListUiState.Loading);
+    fun getAll(){
+        viewModelScope.launch {
+            nurseListUiState = NurseListUiState.Loading
 
+            try {
+                val nurseList: List<Nurse> = Connection.apiNurse.getAll()
+                nurseListUiState = NurseListUiState.Success(nurseList)
+                Log.d("Succesful","Succesful connection to API")
+            }catch (e: Exception){
+                Log.d("Failed", "Failed connection to API: ${e.message} ${e.printStackTrace()}")
+                nurseListUiState = NurseListUiState.Error
+            }
+        }
+    }
 
     private fun getMockNurses(): List<Nurse> = listOf(
         // Modificado: Añadido el profileResId

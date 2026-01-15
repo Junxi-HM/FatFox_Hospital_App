@@ -18,9 +18,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.fatfoxhospital.R
 import com.example.fatfoxhospital.model.Nurse
 import com.example.fatfoxhospital.viewmodel.NurseViewModel
+import com.example.fatfoxhospital.viewmodel.uistate.NurseListUiState
+
+var dataLoaded: Boolean = false
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -29,7 +33,11 @@ fun NurseListScreen(
     onNurseClick: (Nurse) -> Unit,
     onBack: () -> Unit
 ) {
-    val nurses by viewModel.nurses.observeAsState(emptyList())
+    val nurseListUiState = viewModel.nurseListUiState
+    if(!dataLoaded){
+        viewModel.getAll()
+        dataLoaded = true
+    }
 
     Scaffold(
         topBar = {
@@ -42,7 +50,10 @@ fun NurseListScreen(
                 },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.back_button))
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            stringResource(R.string.back_button)
+                        )
                     }
                 }
             )
@@ -56,11 +67,19 @@ fun NurseListScreen(
             contentPadding = PaddingValues(vertical = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            items(nurses, key = { it.id }) { nurse ->
-                NurseItem(
-                    nurse = nurse,
-                    onClick = { onNurseClick(nurse) }
-                )
+            when (nurseListUiState) {
+                is NurseListUiState.Loading -> item { Text("Cargando...") }
+                is NurseListUiState.Error -> item { Text("Error...") }
+                is NurseListUiState.Success -> items(
+                    nurseListUiState.nurseList,
+                    key = { it.id }) { nurse ->
+                    NurseItem(
+                        nurse = nurse,
+                        onClick = { onNurseClick(nurse) }
+                    )
+                }
+
+
             }
         }
     }
@@ -80,7 +99,6 @@ fun NurseItem(nurse: Nurse, onClick: () -> Unit) {
                 .padding(20.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // 修改这里：加载护士的profile图片而不是显示首字母
             Image(
                 painter = painterResource(id = NurseViewModel.getResIdFromByte(nurse.profileRes)),
                 contentDescription = "Foto de perfil de ${nurse.name} ${nurse.surname}",
