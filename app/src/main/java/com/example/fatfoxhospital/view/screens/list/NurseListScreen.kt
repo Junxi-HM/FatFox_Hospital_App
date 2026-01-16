@@ -1,5 +1,6 @@
 package com.example.fatfoxhospital.view.screens.list
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -9,6 +10,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -24,8 +26,6 @@ import com.example.fatfoxhospital.model.Nurse
 import com.example.fatfoxhospital.viewmodel.NurseViewModel
 import com.example.fatfoxhospital.viewmodel.uistate.NurseListUiState
 
-var dataLoaded: Boolean = false
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NurseListScreen(
@@ -34,9 +34,9 @@ fun NurseListScreen(
     onBack: () -> Unit
 ) {
     val nurseListUiState = viewModel.nurseListUiState
-    if(!dataLoaded){
+
+    LaunchedEffect(Unit) {
         viewModel.getAll()
-        dataLoaded = true
     }
 
     Scaffold(
