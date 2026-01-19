@@ -14,6 +14,7 @@ import com.example.fatfoxhospital.R
 import com.example.fatfoxhospital.backend.Connection
 import com.example.fatfoxhospital.model.Nurse
 import com.example.fatfoxhospital.viewmodel.uistate.NurseListUiState
+import com.example.fatfoxhospital.viewmodel.uistate.NurseUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -57,11 +58,6 @@ class NurseViewModel(application: Application) : AndroidViewModel(application) {
 
 
     // SEARCH
-    fun updateSearchQuery(query: String) {
-        _searchQuery.value = query
-        _searchResults.value = filterNurses(query)
-    }
-
     private fun filterNurses(query: String): List<Nurse> {
         if (query.isBlank()) return emptyList()
         val lowerQuery = query.lowercase()
@@ -211,6 +207,28 @@ class NurseViewModel(application: Application) : AndroidViewModel(application) {
                 nurseListUiState = NurseListUiState.Error
             }
         }
+    }
+
+    // Search/Get by name
+    var nurseUiState: NurseUiState by mutableStateOf(NurseUiState.Loading);
+    fun searchNurse(name: String){
+        viewModelScope.launch {
+            nurseUiState = NurseUiState.Loading
+
+            try {
+                val nurse: Nurse = Connection.apiNurse.searchNurse(name)
+                nurseUiState = NurseUiState.Success(nurse)
+                Log.d("Succesful","Succesful connection to API")
+            }catch (e: Exception){
+                Log.d("Failed", "Failed connection to API: ${e.message} ${e.printStackTrace()}")
+                nurseUiState = NurseUiState.Error
+            }
+        }
+    }
+
+    fun updateSearchQuery(newQuery: String) {
+        _searchQuery.value = newQuery
+        searchNurse(newQuery)
     }
 
     private fun getMockNurses(): List<Nurse> = listOf(

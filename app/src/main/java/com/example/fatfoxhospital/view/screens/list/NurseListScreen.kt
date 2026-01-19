@@ -1,6 +1,5 @@
 package com.example.fatfoxhospital.view.screens.list
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -11,8 +10,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -20,7 +17,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.fatfoxhospital.R
 import com.example.fatfoxhospital.model.Nurse
 import com.example.fatfoxhospital.viewmodel.NurseViewModel
@@ -68,7 +64,7 @@ fun NurseListScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             when (nurseListUiState) {
-                is NurseListUiState.Loading -> item { Text("Cargando...") }
+                is NurseListUiState.Loading -> item { Text("Loading...") }
                 is NurseListUiState.Error -> item { Text("Error...") }
                 is NurseListUiState.Success -> items(
                     nurseListUiState.nurseList,
