@@ -1,5 +1,6 @@
 package com.example.fatfoxhospital.backend
 
+import com.example.fatfoxhospital.model.LoginRequest
 import com.example.fatfoxhospital.model.Nurse
 import retrofit2.Response
 import retrofit2.http.*
@@ -10,7 +11,7 @@ interface NurseApiEndpoints {
     suspend fun getAll(): List<Nurse>
     // LOGIN: @PostMapping("/login")
     @POST("nurse/login")
-    suspend fun login(@Body nurse: Nurse): Response<Boolean>
+    suspend fun login(@Body req: LoginRequest): Response<Boolean>
 
     // READ BY ID: @GetMapping("/{id}")
     @GET("nurse/{id}")

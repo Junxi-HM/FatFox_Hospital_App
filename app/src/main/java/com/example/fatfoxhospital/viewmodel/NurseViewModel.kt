@@ -12,12 +12,17 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.fatfoxhospital.R
 import com.example.fatfoxhospital.backend.Connection
+import com.example.fatfoxhospital.model.LoginRequest
 import com.example.fatfoxhospital.model.Nurse
 import com.example.fatfoxhospital.viewmodel.uistate.NurseListUiState
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.receiveAsFlow
 
 data class RegistrationUiState(
     val name: String = "",
@@ -32,6 +37,10 @@ data class RegistrationUiState(
 )
 
 class NurseViewModel(application: Application) : AndroidViewModel(application) {
+
+    private val _remoteNurse = MutableStateFlow<Nurse?>(null)
+    val remoteNurse:StateFlow<Nurse?> = _remoteNurse
+
 
     private val _nurses = MutableLiveData<List<Nurse>>(getMockNurses())
     val nurses: LiveData<List<Nurse>> = _nurses
@@ -82,11 +91,27 @@ class NurseViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     // LOGIN
-    fun loginAuthenticate(username: String, password: String): Boolean {
-        return _nurses.value?.any {
-            it.user == username && it.password == password
-        } ?: false
+    private val _loginEvent = Channel<Boolean>(Channel.BUFFERED)
+    val loginEvent = _loginEvent.receiveAsFlow()
+
+    fun login(username: String, password: String) {
+        viewModelScope.launch {
+            val ok = loginAuthenticate(username, password)
+            _loginEvent.send(ok)   // true 成功，false 失败
+        }
     }
+
+    private suspend fun loginAuthenticate(username: String, password: String): Boolean =
+        withContext(Dispatchers.IO) {
+            try {
+                Connection.apiNurse.login(LoginRequest(username, password))
+                Connection.apiNurse.login(LoginRequest(username, password))
+                    .isSuccessful
+            } catch (e: Exception) {
+                false
+            }
+        }
+
 
     // REGISTRATION
     fun updateName(newName: String) {
