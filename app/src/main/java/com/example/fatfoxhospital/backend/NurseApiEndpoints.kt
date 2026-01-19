@@ -9,6 +9,7 @@ interface NurseApiEndpoints {
     // LIST: @GetMapping("/index")
     @GET("nurse/index")
     suspend fun getAll(): List<Nurse>
+
     // LOGIN: @PostMapping("/login")
     @POST("nurse/login")
     suspend fun login(@Body req: LoginRequest): Response<Boolean>
@@ -16,6 +17,10 @@ interface NurseApiEndpoints {
     // READ BY ID: @GetMapping("/{id}")
     @GET("nurse/{id}")
     suspend fun getNurse(@Path("id") id: Long): Response<Nurse>
+
+    // GET BY NAME: @GetMapping("/name/{name}")
+    @GET("nurse/name/{name}")
+    suspend fun searchNurse(@Path("name") name: String): Nurse
 
     // UPDATE: @PutMapping("/{id}")
     @PUT("nurse/{id}")
