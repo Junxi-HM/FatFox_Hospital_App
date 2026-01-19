@@ -31,10 +31,19 @@ fun NurseLoginScreen(viewModel: NurseViewModel, navController: NavHostController
 
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    val loginSuccessMessage = stringResource(R.string.login_success_toast)
-    val loginFailedMessage = stringResource(R.string.login_failed_toast)
     val context = LocalContext.current
 
+    /* 收集登录结果 */
+    LaunchedEffect(Unit) {
+        viewModel.loginEvent.collect { success ->
+            if (success) {
+                Toast.makeText(context, R.string.login_success_toast, Toast.LENGTH_SHORT).show()
+                navController.navigate("home") { popUpTo("login") { inclusive = true } }
+            } else {
+                Toast.makeText(context, R.string.login_failed_toast, Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -111,16 +120,7 @@ fun NurseLoginScreen(viewModel: NurseViewModel, navController: NavHostController
 
                 Button(
                     onClick = {
-                        val isValidUser = viewModel.loginAuthenticate(username, password)
-
-                        if (isValidUser) {
-                            Toast.makeText(context, loginSuccessMessage, Toast.LENGTH_SHORT).show()
-                            navController.navigate("home") {
-                                popUpTo("login") { inclusive = true }
-                            }
-                        } else {
-                            Toast.makeText(context, loginFailedMessage, Toast.LENGTH_SHORT).show()
-                        }
+                        viewModel.login(username, password)
                     },
                     modifier = Modifier
                         .fillMaxWidth()
