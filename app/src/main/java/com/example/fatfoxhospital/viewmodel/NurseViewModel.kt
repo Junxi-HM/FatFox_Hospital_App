@@ -14,13 +14,19 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.fatfoxhospital.R
 import com.example.fatfoxhospital.backend.Connection
+import com.example.fatfoxhospital.model.LoginRequest
 import com.example.fatfoxhospital.model.Nurse
 import com.example.fatfoxhospital.viewmodel.uistate.NurseListUiState
+import com.example.fatfoxhospital.viewmodel.uistate.NurseUiState
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.receiveAsFlow
 
 data class RegistrationUiState(
     val name: String = "",
@@ -34,6 +40,10 @@ data class RegistrationUiState(
 )
 
 class NurseViewModel(application: Application) : AndroidViewModel(application) {
+
+    private val _remoteNurse = MutableStateFlow<Nurse?>(null)
+    val remoteNurse:StateFlow<Nurse?> = _remoteNurse
+
 
     private val _nurses = MutableLiveData<List<Nurse>>(getMockNurses())
     val nurses: LiveData<List<Nurse>> = _nurses
@@ -59,11 +69,6 @@ class NurseViewModel(application: Application) : AndroidViewModel(application) {
 
 
     // SEARCH
-    fun updateSearchQuery(query: String) {
-        _searchQuery.value = query
-        _searchResults.value = filterNurses(query)
-    }
-
     private fun filterNurses(query: String): List<Nurse> {
         if (query.isBlank()) return emptyList()
         val lowerQuery = query.lowercase()
@@ -84,11 +89,27 @@ class NurseViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     // LOGIN
-    fun loginAuthenticate(username: String, password: String): Boolean {
-        return _nurses.value?.any {
-            it.user == username && it.password == password
-        } ?: false
+    private val _loginEvent = Channel<Boolean>(Channel.BUFFERED)
+    val loginEvent = _loginEvent.receiveAsFlow()
+
+    fun login(username: String, password: String) {
+        viewModelScope.launch {
+            val ok = loginAuthenticate(username, password)
+            _loginEvent.send(ok)   // true 成功，false 失败
+        }
     }
+
+    private suspend fun loginAuthenticate(username: String, password: String): Boolean =
+        withContext(Dispatchers.IO) {
+            try {
+                Connection.apiNurse.login(LoginRequest(username, password))
+                Connection.apiNurse.login(LoginRequest(username, password))
+                    .isSuccessful
+            } catch (e: Exception) {
+                false
+            }
+        }
+
 
     // REGISTRATION
     fun updateName(newName: String) {
@@ -227,4 +248,86 @@ class NurseViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
     }
+
+    // Search/Get by name
+    var nurseUiState: NurseUiState by mutableStateOf(NurseUiState.Loading);
+    fun searchNurse(name: String){
+        viewModelScope.launch {
+            nurseUiState = NurseUiState.Loading
+
+            try {
+                val nurse: Nurse = Connection.apiNurse.searchNurse(name)
+                nurseUiState = NurseUiState.Success(nurse)
+                Log.d("Succesful","Succesful connection to API")
+            }catch (e: Exception){
+                Log.d("Failed", "Failed connection to API: ${e.message} ${e.printStackTrace()}")
+                nurseUiState = NurseUiState.Error
+            }
+        }
+    }
+
+    fun updateSearchQuery(newQuery: String) {
+        _searchQuery.value = newQuery
+        searchNurse(newQuery)
+    }
+
+    private fun getMockNurses(): List<Nurse> = listOf(
+        // Modificado: Añadido el profileResId
+        Nurse(
+            1,
+            "Alice",
+            "Johnson",
+            "alice.johnson@fatfox.com",
+            "alice.j",
+            "pass123",
+            0
+        ),
+        Nurse(
+            2,
+            "Alina",
+            "Kovacs",
+            "alina.kovacs@fatfox.com",
+            "alina.k",
+            "qwerty",
+            1
+        ),
+        Nurse(3, "Bob", "Smith", "bob.smith@fatfox.com", "bob.s", "abc123", 2),
+        Nurse(
+            4,
+            "Charlie",
+            "Brown",
+            "charlie.brown@fatfox.com",
+            "charlie.b",
+            "password123",
+            1
+        ),
+        Nurse(5, "David", "Lee", "david.lee@fatfox.com", "david.l", "letmein", 6),
+        Nurse(
+            6,
+            "Emma",
+            "Wilson",
+            "emma.wilson@fatfox.com",
+            "emma.w",
+            "secure456",
+            4
+        ),
+        Nurse(
+            7,
+            "Fiona",
+            "Garcia",
+            "fiona.garcia@fatfox.com",
+            "fiona.g",
+            "medical789",
+            4
+        ),
+        Nurse(
+            8,
+            "George",
+            "Miller",
+            "george.miller@fatfox.com",
+            "george.m",
+            "hospital321",
+            0
+        )
+    )
 }
