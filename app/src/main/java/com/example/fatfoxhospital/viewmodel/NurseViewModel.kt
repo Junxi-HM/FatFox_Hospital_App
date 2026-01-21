@@ -1,6 +1,8 @@
 package com.example.fatfoxhospital.viewmodel
 
 import android.app.Application
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.util.Log
 import android.util.Patterns
 import androidx.compose.runtime.getValue
@@ -18,6 +20,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.io.ByteArrayOutputStream
 
 data class RegistrationUiState(
     val name: String = "",
@@ -25,8 +28,7 @@ data class RegistrationUiState(
     val email: String = "",
     val username: String = "",
     val password: String = "",
-    // Usamos R.drawable.logo como valor por defecto/placeholder
-    val profileRes: Byte = 0,
+    val profile: Byte = 0,
     val errorMessage: String? = null,
     val isRegistrationSuccessful: Boolean = false
 )
@@ -110,59 +112,60 @@ class NurseViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun updateProfileRes(newIndex: Byte) {
-        _uiState.value = _uiState.value.copy(profileRes = newIndex, errorMessage = null)
+        _uiState.value = _uiState.value.copy(profile = newIndex, errorMessage = null)
     }
 
     fun registerNurse() {
         viewModelScope.launch {
             val state = _uiState.value
 
-            // 1. Validations
-            if (state.name.isBlank() || state.surname.isBlank() || state.email.isBlank() || state.username.isBlank() || state.password.isBlank()) {
-                _uiState.value =
-                    state.copy(errorMessage = "Error: Todos los campos son obligatorios.")
+            // Validación local de campos obligatorios
+            if (state.name.isBlank() || state.surname.isBlank() || state.email.isBlank() ||
+                state.username.isBlank() || state.password.isBlank()) {
+                _uiState.value = state.copy(errorMessage = "Error: Todos los campos son obligatorios.")
                 return@launch
             }
 
-            if (!Patterns.EMAIL_ADDRESS.matcher(state.email).matches()) {
-                _uiState.value = state.copy(errorMessage = "Error: Formato de correo inválido.")
-                return@launch
+            try {
+                val newNurse = Nurse(
+                    id = null,
+                    name = state.name.trim(),
+                    surname = state.surname.trim(),
+                    email = state.email.trim(),
+                    user = state.username.trim(),
+                    password = state.password,
+                    profile = byteArrayOf(state.profile)
+                )
+
+                // Intento de registro
+                val response = Connection.apiNurse.createNurse(newNurse)
+
+                if (response.isSuccessful) {
+                    // Éxito total
+                    _uiState.value = state.copy(
+                        isRegistrationSuccessful = true,
+                        errorMessage = null
+                    )
+                    Log.d("API_SUCCESS", "Nurse created successfully")
+                } else {
+                    // El servidor respondió con un error
+                    val errorBody = response.errorBody()?.string()
+                    Log.e("API_ERROR", "Respuesta de error: $errorBody")
+                    _uiState.value = state.copy(errorMessage = "Error del servidor: ${response.code()}")
+                }
+
+            } catch (e: Exception) {
+                // Diagnosis del error de procesamiento
+                Log.e("API_EXCEPTION", "Clase de error: ${e.javaClass.simpleName}")
+                Log.e("API_EXCEPTION", "Mensaje: ${e.message}")
+
+                // Si el error es "MalformedJsonException" o "EOFException", el problema es el formato de respuesta
+                if (e is com.google.gson.JsonSyntaxException) {
+                    _uiState.value = state.copy(errorMessage = "Error: El servidor envió un formato de datos incompatible.")
+                } else {
+                    _uiState.value = state.copy(errorMessage = "Error de conexión o datos: ${e.localizedMessage}")
+                }
             }
-
-            // Check against current list of nurses for email and username duplicates
-            val currentNurses = _nurses.value ?: emptyList()
-
-            if (currentNurses.any { it.email.equals(state.email, ignoreCase = true) }) {
-                _uiState.value = state.copy(errorMessage = "Error: Correo ya registrado.")
-                return@launch
-            }
-
-            if (currentNurses.any { it.user.equals(state.username, ignoreCase = true) }) {
-                _uiState.value = state.copy(errorMessage = "Error: Usuario ya existe.")
-                return@launch
-            }
-
-
-            // Generate a new ID (simple increment based on current size/max ID)
-            val newId = (currentNurses.maxOfOrNull { it.id } ?: 0) + 1
-
-            // Create the new Nurse object
-            val newNurse = Nurse(
-                id = newId,
-                name = state.name.trim(),
-                surname = state.surname.trim(),
-                email = state.email.trim(),
-                user = state.username.trim(),
-                password = state.password,
-                profileRes = state.profileRes
-            )
-
-            // Add the new nurse to the list
-            _nurses.value = currentNurses + newNurse
-            numberNurses = _nurses.value?.size?.toLong() ?: 0L
-
-            // 2. Success
-            _uiState.value = state.copy(isRegistrationSuccessful = true)
         }
     }
 
@@ -176,24 +179,36 @@ class NurseViewModel(application: Application) : AndroidViewModel(application) {
 
     companion object {
         val PROFILE_RESOURCES = listOf(
-            R.drawable.perfil1,
-            R.drawable.perfil2,
-            R.drawable.perfil3,
-            R.drawable.perfil4,
-            R.drawable.perfil5,
-            R.drawable.perfil7
+            R.drawable.perfil1, // 索引 0
+            R.drawable.perfil2, // 索引 1
+            R.drawable.perfil3, // 索引 2
+            R.drawable.perfil4, // 索引 3
+            R.drawable.perfil5, // 索引 4
+            R.drawable.perfil7  // 索引 5
         )
-
-        fun getResIdFromByte(index: Byte): Int {
-            return PROFILE_RESOURCES.getOrElse(index.toInt()) { R.drawable.logo }
+        fun getResIdFromByte(profileByte: Byte): Int {
+            val index = profileByte.toInt()
+            return if (index in PROFILE_RESOURCES.indices) {
+                PROFILE_RESOURCES[index]
+            } else {
+                R.drawable.perfil1 // 默认图
+            }
         }
-
-        fun getByteFromResId(resId: Int): Byte {
-            val index = PROFILE_RESOURCES.indexOf(resId)
-            return if (index != -1) index.toByte() else 0.toByte()
-        }
-
     }
+
+
+
+    private fun getMockNurses(): List<Nurse> = listOf(
+        Nurse(1, "Alice", "Johnson", "alice.johnson@fatfox.com", "alice.j", "pass123", byteArrayOf(0)),
+        Nurse(2, "Alina", "Kovacs", "alina.kovacs@fatfox.com", "alina.k", "qwerty", byteArrayOf(1)),
+        Nurse(3, "Bob", "Smith", "bob.smith@fatfox.com", "bob.s", "abc123", byteArrayOf(2)),
+        Nurse(4, "Charlie", "Brown", "charlie.brown@fatfox.com", "charlie.b", "password123", byteArrayOf(1)),
+        Nurse(5, "David", "Lee", "david.lee@fatfox.com", "david.l", "letmein", byteArrayOf(5)), // 修正了索引6，通常头像索引不超过5
+        Nurse(6, "Emma", "Wilson", "emma.wilson@fatfox.com", "emma.w", "secure456", byteArrayOf(4)),
+        Nurse(7, "Fiona", "Garcia", "fiona.garcia@fatfox.com", "fiona.g", "medical789", byteArrayOf(4)),
+        Nurse(8, "George", "Miller", "george.miller@fatfox.com", "george.m", "hospital321", byteArrayOf(0))
+    )
+
 
     // Backend
     // List
@@ -212,64 +227,4 @@ class NurseViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
     }
-
-    private fun getMockNurses(): List<Nurse> = listOf(
-        // Modificado: Añadido el profileResId
-        Nurse(
-            1,
-            "Alice",
-            "Johnson",
-            "alice.johnson@fatfox.com",
-            "alice.j",
-            "pass123",
-            0
-        ),
-        Nurse(
-            2,
-            "Alina",
-            "Kovacs",
-            "alina.kovacs@fatfox.com",
-            "alina.k",
-            "qwerty",
-            1
-        ),
-        Nurse(3, "Bob", "Smith", "bob.smith@fatfox.com", "bob.s", "abc123", 2),
-        Nurse(
-            4,
-            "Charlie",
-            "Brown",
-            "charlie.brown@fatfox.com",
-            "charlie.b",
-            "password123",
-            1
-        ),
-        Nurse(5, "David", "Lee", "david.lee@fatfox.com", "david.l", "letmein", 6),
-        Nurse(
-            6,
-            "Emma",
-            "Wilson",
-            "emma.wilson@fatfox.com",
-            "emma.w",
-            "secure456",
-            4
-        ),
-        Nurse(
-            7,
-            "Fiona",
-            "Garcia",
-            "fiona.garcia@fatfox.com",
-            "fiona.g",
-            "medical789",
-            4
-        ),
-        Nurse(
-            8,
-            "George",
-            "Miller",
-            "george.miller@fatfox.com",
-            "george.m",
-            "hospital321",
-            0
-        )
-    )
 }

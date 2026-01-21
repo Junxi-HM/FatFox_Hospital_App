@@ -21,6 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.fatfoxhospital.R
+import com.example.fatfoxhospital.extension.getProfilePainter
 import com.example.fatfoxhospital.model.Nurse
 import com.example.fatfoxhospital.viewmodel.NurseViewModel
 
@@ -81,7 +82,7 @@ fun SearchScreen(
                 ) {
                     itemsIndexed(
                         items = results,
-                        key = { _, nurse -> nurse.id }
+                        key = { _, nurse -> nurse.id!! }
                     ) { _, nurse ->
                         NurseCard(
                             nurse = nurse,
@@ -173,7 +174,7 @@ private fun NurseCard(nurse: Nurse, onClick: () -> Unit) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
-                painter = painterResource(id = NurseViewModel.getResIdFromByte(nurse.profileRes)),
+                painter = nurse.getProfilePainter(),
                 contentDescription = "Foto de perfil de ${nurse.name} ${nurse.surname}",
                 modifier = Modifier
                     .size(60.dp)

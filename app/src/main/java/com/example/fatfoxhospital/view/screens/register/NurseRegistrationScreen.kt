@@ -96,7 +96,7 @@ fun NurseRegistrationScreen(
             )
 
             ProfileImageSelector(
-                currentResByte = uiState.profileRes,
+                currentResByte = uiState.profile,
                 onImageSelected = viewModel::updateProfileRes
             )
 
@@ -178,8 +178,8 @@ fun NurseRegistrationScreen(
 
 @Composable
 private fun ProfileImageSelector(
-    currentResByte: Byte, // 改为接收 Byte
-    onImageSelected: (Byte) -> Unit // 改为回调 Byte
+    currentResByte: Byte,
+    onImageSelected: (Byte) -> Unit
 ) {
     val resources = NurseViewModel.PROFILE_RESOURCES
 
@@ -188,6 +188,7 @@ private fun ProfileImageSelector(
         modifier = Modifier.padding(vertical = 16.dp)
     ) {
         Image(
+            // 使用之前在 NurseViewModel 中定义的转换方法，传入当前的 Byte 索引
             painter = painterResource(id = NurseViewModel.getResIdFromByte(currentResByte)),
             contentDescription = "Foto de perfil",
             modifier = Modifier
@@ -197,6 +198,7 @@ private fun ProfileImageSelector(
 
         Button(
             onClick = {
+                // 计算下一个索引并回调
                 val nextIndex = (currentResByte + 1) % resources.size
                 onImageSelected(nextIndex.toByte())
             }
