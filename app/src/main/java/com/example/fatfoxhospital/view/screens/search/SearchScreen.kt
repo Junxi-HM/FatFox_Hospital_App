@@ -20,6 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.fatfoxhospital.R
+import com.example.fatfoxhospital.extension.getProfilePainter
 import com.example.fatfoxhospital.model.Nurse
 import com.example.fatfoxhospital.viewmodel.NurseViewModel
 import com.example.fatfoxhospital.viewmodel.uistate.NurseUiState
@@ -72,6 +73,15 @@ fun SearchScreen(
             )
 
             Spacer(modifier = Modifier.height(16.dp))
+            if (results.isNotEmpty()) {
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    itemsIndexed(
+                        items = results,
+                        key = { _, nurse -> nurse.id!! }
+                    ) { _, nurse ->
 
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -149,7 +159,7 @@ private fun NurseCard(nurse: Nurse, onClick: () -> Unit) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
-                painter = painterResource(id = NurseViewModel.getResIdFromByte(nurse.profileRes)),
+                painter = nurse.getProfilePainter(),
                 contentDescription = "Foto de perfil de ${nurse.name} ${nurse.surname}",
                 modifier = Modifier
                     .size(60.dp)

@@ -18,6 +18,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.fatfoxhospital.R
+import com.example.fatfoxhospital.extension.getProfilePainter
 import com.example.fatfoxhospital.viewmodel.NurseViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -60,7 +61,7 @@ fun NurseDetailScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Image(
-                    painter = painterResource(id = NurseViewModel.getResIdFromByte(nurse.profileRes)),
+                    painter = nurse.getProfilePainter(),
                     contentDescription = "Foto de perfil de ${nurse.name} ${nurse.surname}",
                     modifier = Modifier
                         .size(120.dp)

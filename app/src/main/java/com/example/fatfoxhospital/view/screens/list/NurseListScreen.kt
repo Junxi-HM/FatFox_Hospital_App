@@ -18,6 +18,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.fatfoxhospital.R
+import com.example.fatfoxhospital.extension.getProfilePainter
 import com.example.fatfoxhospital.model.Nurse
 import com.example.fatfoxhospital.viewmodel.NurseViewModel
 import com.example.fatfoxhospital.viewmodel.uistate.NurseListUiState
@@ -68,7 +69,7 @@ fun NurseListScreen(
                 is NurseListUiState.Error -> item { Text("Error...") }
                 is NurseListUiState.Success -> items(
                     nurseListUiState.nurseList,
-                    key = { it.id }) { nurse ->
+                    key = { it.id!! }) { nurse ->
                     NurseItem(
                         nurse = nurse,
                         onClick = { onNurseClick(nurse) }
@@ -96,7 +97,7 @@ fun NurseItem(nurse: Nurse, onClick: () -> Unit) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
-                painter = painterResource(id = NurseViewModel.getResIdFromByte(nurse.profileRes)),
+                painter = nurse.getProfilePainter(),
                 contentDescription = "Foto de perfil de ${nurse.name} ${nurse.surname}",
                 modifier = Modifier
                     .size(56.dp)

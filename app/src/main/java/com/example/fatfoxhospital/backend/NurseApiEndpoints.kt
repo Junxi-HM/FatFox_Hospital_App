@@ -14,6 +14,10 @@ interface NurseApiEndpoints {
     @POST("nurse/login")
     suspend fun login(@Body req: LoginRequest): Response<Boolean>
 
+    // REGISTER: @PostMapping("/new")
+    @POST("nurse/new")
+    suspend fun createNurse(@Body nurse: Nurse): Response<Void>
+
     // READ BY ID: @GetMapping("/{id}")
     @GET("nurse/{id}")
     suspend fun getNurse(@Path("id") id: Long): Response<Nurse>
@@ -29,4 +33,6 @@ interface NurseApiEndpoints {
     // DELETE: @DeleteMapping("/{id}")
     @DELETE("nurse/{id}")
     suspend fun deleteNurse(@Path("id") id: Long): Response<Void>
+
+
 }
