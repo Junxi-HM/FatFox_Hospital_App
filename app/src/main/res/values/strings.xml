@@ -89,4 +89,9 @@
     <string name="nurse_not_found">Nurse not found</string>
 
     <string name="select_profile_picture_button">Change Profile Photo</string>
+
+    <!-- NurseProfileScreen -->
+    <string name="nurse_profile_title">Nurse Profile</string>
+    <string name="nurse_profile_description">View and interact with your profile</string>
+    <string name="nurse_profile_error">Error loading profile</string>
 </resources>

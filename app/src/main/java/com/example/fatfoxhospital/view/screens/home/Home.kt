@@ -36,6 +36,7 @@ data class MenuItem(
 fun HomeScreen(
     onNavigateToSearch: () -> Unit,
     onNavigateToNurseList: () -> Unit,
+    onNavigateToProfile: () -> Unit,
     onNavigateToHome: () -> Unit
 ) {
     val menuItems = listOf(
@@ -50,6 +51,12 @@ fun HomeScreen(
             description = stringResource(R.string.full_list_desc),
             icon = Icons.AutoMirrored.Filled.List,
             onClick = onNavigateToNurseList
+        ),
+        MenuItem(
+            title = stringResource(R.string.nurse_profile_title),
+            description = stringResource(R.string.nurse_profile_description),
+            icon = Icons.Default.PersonSearch,
+            onClick = onNavigateToProfile
         )
     )
 
