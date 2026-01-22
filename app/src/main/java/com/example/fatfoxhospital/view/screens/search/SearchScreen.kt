@@ -169,7 +169,9 @@ private fun NurseCard(nurse: Nurse, onClick: () -> Unit) {
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.SemiBold
                 )
+
                 Spacer(modifier = Modifier.height(4.dp))
+
                 Text(
                     text = nurse.user,
                     style = MaterialTheme.typography.bodyMedium,

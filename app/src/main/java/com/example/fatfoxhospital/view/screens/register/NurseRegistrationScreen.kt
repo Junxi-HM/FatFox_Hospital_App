@@ -32,7 +32,6 @@ fun NurseRegistrationScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
-
     val successMessage = stringResource(R.string.registration_success_snackbar)
 
     LaunchedEffect(uiState.isRegistrationSuccessful) {
@@ -95,7 +94,6 @@ fun NurseRegistrationScreen(
                 modifier = Modifier.padding(bottom = 24.dp)
             )
 
-            // Image selector
             ProfileImageSelector(
                 profileBytes = uiState.profile,
                 currentIndex = uiState.profileIndex,
@@ -106,14 +104,18 @@ fun NurseRegistrationScreen(
                 value = uiState.name,
                 onValueChange = viewModel::updateName,
                 label = { Text(stringResource(R.string.name_label)) },
-                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
             )
 
             OutlinedTextField(
                 value = uiState.surname,
                 onValueChange = viewModel::updateSurname,
                 label = { Text(stringResource(R.string.surname_label)) },
-                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
             )
 
             OutlinedTextField(
@@ -121,14 +123,18 @@ fun NurseRegistrationScreen(
                 onValueChange = viewModel::updateEmail,
                 label = { Text(stringResource(R.string.email_label)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
             )
 
             OutlinedTextField(
                 value = uiState.username,
                 onValueChange = viewModel::updateUsername,
                 label = { Text(stringResource(R.string.username_label_registration)) },
-                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
             )
 
             OutlinedTextField(
@@ -137,7 +143,9 @@ fun NurseRegistrationScreen(
                 label = { Text(stringResource(R.string.password_label)) },
                 visualTransformation = PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
             )
 
             Spacer(modifier = Modifier.height(32.dp))
@@ -145,7 +153,9 @@ fun NurseRegistrationScreen(
             Button(
                 onClick = viewModel::registerNurse,
                 enabled = !uiState.isRegistrationSuccessful,
-                modifier = Modifier.fillMaxWidth().height(50.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp)
             ) {
                 Text(stringResource(R.string.register_button))
             }
@@ -178,7 +188,6 @@ private fun ProfileImageSelector(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.padding(vertical = 16.dp)
     ) {
-
         // If there is byte data, decode it and display it as a bitmap; otherwise, display a placeholder image.
         if (profileBytes != null && profileBytes.isNotEmpty()) {
             val bitmap = remember(profileBytes) {
@@ -187,13 +196,17 @@ private fun ProfileImageSelector(
             Image(
                 bitmap = bitmap.asImageBitmap(),
                 contentDescription = stringResource(R.string.ProfilePicture),
-                modifier = Modifier.size(96.dp).padding(bottom = 8.dp)
+                modifier = Modifier
+                    .size(96.dp)
+                    .padding(bottom = 8.dp)
             )
         } else {
             Image(
                 painter = painterResource(id = R.drawable.perfil1),
                 contentDescription = stringResource(R.string.Placeholder),
-                modifier = Modifier.size(96.dp).padding(bottom = 8.dp)
+                modifier = Modifier
+                    .size(96.dp)
+                    .padding(bottom = 8.dp)
             )
         }
 

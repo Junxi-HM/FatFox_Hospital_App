@@ -9,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -21,8 +22,6 @@ import com.example.fatfoxhospital.model.Nurse
 import com.example.fatfoxhospital.viewmodel.NurseViewModel
 import com.example.fatfoxhospital.viewmodel.uistate.NurseListUiState
 
-var dataLoaded: Boolean = false
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NurseListScreen(
@@ -31,9 +30,8 @@ fun NurseListScreen(
     onBack: () -> Unit
 ) {
     val nurseListUiState = viewModel.nurseListUiState
-    if(!dataLoaded){
+    LaunchedEffect(Unit) {
         viewModel.getAll()
-        dataLoaded = true
     }
 
     Scaffold(
@@ -78,6 +76,7 @@ fun NurseListScreen(
                         }
                     }
                 }
+
                 is NurseListUiState.Success -> {
                     items(nurseListUiState.nurseList, key = { it.id!! }) { nurse ->
                         NurseItem(nurse = nurse, onClick = { onNurseClick(nurse) })
@@ -109,7 +108,6 @@ fun NurseItem(nurse: Nurse, onClick: () -> Unit) {
                     .size(56.dp)
                     .clip(CircleShape)
             )
-
             Spacer(modifier = Modifier.width(20.dp))
 
             Column {
@@ -119,6 +117,7 @@ fun NurseItem(nurse: Nurse, onClick: () -> Unit) {
                     fontWeight = FontWeight.SemiBold
                 )
                 Spacer(modifier = Modifier.height(4.dp))
+
                 Text(
                     text = stringResource(R.string.username_label, nurse.user),
                     style = MaterialTheme.typography.bodyMedium,

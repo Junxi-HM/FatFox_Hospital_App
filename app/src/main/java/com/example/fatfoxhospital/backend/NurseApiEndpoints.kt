@@ -37,6 +37,4 @@ interface NurseApiEndpoints {
     // DELETE: @DeleteMapping("/{id}")
     @DELETE("nurse/{id}")
     suspend fun deleteNurse(@Path("id") id: Long): Response<Void>
-
-
 }

@@ -27,7 +27,6 @@ fun NurseDetailScreen(
 ) {
     val selectedNurse by viewModel.selectedNurse.observeAsState()
 
-
     Scaffold(
         topBar = {
             TopAppBar(
@@ -37,7 +36,10 @@ fun NurseDetailScreen(
                         viewModel.clearSelectedNurse()
                         onBack()
                     }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.back_icon_desc))
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            stringResource(R.string.back_icon_desc)
+                        )
                     }
                 }
             )
@@ -58,7 +60,6 @@ fun NurseDetailScreen(
                         .size(120.dp)
                         .clip(CircleShape)
                 )
-
                 Spacer(modifier = Modifier.height(24.dp))
 
                 Text(
@@ -66,7 +67,6 @@ fun NurseDetailScreen(
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold
                 )
-
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Card(

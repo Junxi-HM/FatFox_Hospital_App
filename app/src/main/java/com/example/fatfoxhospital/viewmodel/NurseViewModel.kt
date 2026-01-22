@@ -48,9 +48,6 @@ class NurseViewModel(application: Application) : AndroidViewModel(application) {
     private val _uiState = MutableStateFlow(RegistrationUiState())
     val uiState: StateFlow<RegistrationUiState> = _uiState.asStateFlow()
 
-
-
-
     // DETAIL
     fun selectNurse(nurse: Nurse) {
         _selectedNurse.value = nurse
@@ -61,17 +58,38 @@ class NurseViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     // REGISTRATION
-    fun updateName(newName: String) { _uiState.value = _uiState.value.copy(name = newName) }
-    fun updateSurname(newSurname: String) { _uiState.value = _uiState.value.copy(surname = newSurname) }
-    fun updateEmail(newEmail: String) { _uiState.value = _uiState.value.copy(email = newEmail.trim()) }
-    fun updateUsername(newUsername: String) { _uiState.value = _uiState.value.copy(username = newUsername.trim()) }
-    fun updatePassword(newPassword: String) { _uiState.value = _uiState.value.copy(password = newPassword) }
-    fun registrationComplete() { _uiState.value = RegistrationUiState() }
-    fun clearErrorMessage() { _uiState.value = _uiState.value.copy(errorMessage = null) }
+    fun updateName(newName: String) {
+        _uiState.value = _uiState.value.copy(name = newName)
+    }
+
+    fun updateSurname(newSurname: String) {
+        _uiState.value = _uiState.value.copy(surname = newSurname)
+    }
+
+    fun updateEmail(newEmail: String) {
+        _uiState.value = _uiState.value.copy(email = newEmail.trim())
+    }
+
+    fun updateUsername(newUsername: String) {
+        _uiState.value = _uiState.value.copy(username = newUsername.trim())
+    }
+
+    fun updatePassword(newPassword: String) {
+        _uiState.value = _uiState.value.copy(password = newPassword)
+    }
+
+    fun registrationComplete() {
+        _uiState.value = RegistrationUiState()
+    }
+
+    fun clearErrorMessage() {
+        _uiState.value = _uiState.value.copy(errorMessage = null)
+    }
 
     init {
         updateProfileRes(0)
     }
+
     private fun getByteArrayFromResource(resId: Int): ByteArray {
         val bitmap = BitmapFactory.decodeResource(getApplication<Application>().resources, resId)
         val stream = ByteArrayOutputStream()
@@ -79,6 +97,7 @@ class NurseViewModel(application: Application) : AndroidViewModel(application) {
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
         return stream.toByteArray()
     }
+
     fun updateProfileRes(newIndex: Int) {
         val resId = PROFILE_RESOURCES[newIndex]
         val imageBytes = getByteArrayFromResource(resId)
@@ -87,38 +106,6 @@ class NurseViewModel(application: Application) : AndroidViewModel(application) {
             profileIndex = newIndex,
             errorMessage = null
         )
-    }
-    fun registerNurse() {
-        viewModelScope.launch {
-            val state = _uiState.value
-            if (state.name.isBlank() || state.surname.isBlank() || state.email.isBlank() ||
-                state.username.isBlank() || state.password.isBlank()) {
-                _uiState.value = state.copy(errorMessage = "Error: Todos los campos son obligatorios.")
-                return@launch
-            }
-            try {
-                val newNurse = Nurse(
-                    id = null,
-                    name = state.name.trim(),
-                    surname = state.surname.trim(),
-                    email = state.email.trim(),
-                    user = state.username.trim(),
-                    password = state.password,
-                    profile = state.profile
-                )
-                val response = Connection.apiNurse.createNurse(newNurse)
-                if (response.isSuccessful) {
-                    _uiState.value = state.copy(isRegistrationSuccessful = true, errorMessage = null)
-                } else {
-                    val errorBody = response.errorBody()?.string()
-                    Log.e("API_ERROR", "Error response: $errorBody")
-                    _uiState.value = state.copy(errorMessage = "Server error: ${response.code()}")
-                }
-            } catch (e: Exception) {
-                Log.e("API_EXCEPTION", "Error: ${e.message}")
-                _uiState.value = state.copy(errorMessage = "Connection error: ${e.localizedMessage}")
-            }
-        }
     }
 
     // List of indexes
@@ -133,76 +120,50 @@ class NurseViewModel(application: Application) : AndroidViewModel(application) {
         )
     }
 
-    // List
-    var nurseListUiState: NurseListUiState by mutableStateOf(NurseListUiState.Loading)
-    fun getAll() {
+    // BACKEND
+
+    // REGISTER
+    fun registerNurse() {
         viewModelScope.launch {
-            nurseListUiState = NurseListUiState.Loading
+            val state = _uiState.value
+            if (state.name.isBlank() || state.surname.isBlank() || state.email.isBlank() ||
+                state.username.isBlank() || state.password.isBlank()
+            ) {
+                _uiState.value =
+                    state.copy(errorMessage = "Error: Todos los campos son obligatorios.")
+                return@launch
+            }
             try {
-                val nurseList: List<Nurse> = Connection.apiNurse.getAll()
-                nurseListUiState = NurseListUiState.Success(nurseList)
-                Log.d("Succesful: list", "Succesful connection to API")
+                val newNurse = Nurse(
+                    id = null,
+                    name = state.name.trim(),
+                    surname = state.surname.trim(),
+                    email = state.email.trim(),
+                    user = state.username.trim(),
+                    password = state.password,
+                    profile = state.profile
+                )
+                val response = Connection.apiNurse.createNurse(newNurse)
+                if (response.isSuccessful) {
+                    _uiState.value =
+                        state.copy(isRegistrationSuccessful = true, errorMessage = null)
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    Log.e("API_ERROR", "Error response: $errorBody")
+                    _uiState.value = state.copy(errorMessage = "Server error: ${response.code()}")
+                }
             } catch (e: Exception) {
-                Log.d("Failed: list", "Failed connection to API: ${e.message} ${e.printStackTrace()}")
-                nurseListUiState = NurseListUiState.Error
+                Log.e("API_EXCEPTION", "Error: ${e.message}")
+                _uiState.value =
+                    state.copy(errorMessage = "Connection error: ${e.localizedMessage}")
             }
         }
     }
 
-    // Search/Get by name
-    var nurseUiState: NurseUiState by mutableStateOf(NurseUiState.Loading)
-    fun searchNurse(name: String) {
-        viewModelScope.launch {
-            nurseUiState = NurseUiState.Loading
-
-            try {
-                val nurse: Nurse = Connection.apiNurse.searchNurse(name)
-                nurseUiState = NurseUiState.Success(nurse)
-                Log.d("Succesful: get by name: searchNurse", "Succesful connection to API")
-            } catch (e: Exception) {
-                nurseUiState = NurseUiState.Error
-                Log.d("Failed: get by name", "Failed connection to API: ${e.message} ${e.printStackTrace()}")
-            }
-        }
-    }
-
-    // Get by username
-    fun searchUser(username: String) {
-        viewModelScope.launch {
-            nurseUiState = NurseUiState.Loading
-
-            try {
-                val nurse: Nurse = Connection.apiNurse.searchUser(username)
-                nurseUiState = NurseUiState.Success(nurse)
-                Log.d("Succesful: search user", "Succesful connection to API")
-            } catch (e: Exception) {
-                nurseUiState = NurseUiState.Error
-                Log.d("Failed: search user", "Failed connection to API: ${e.message} ${e.printStackTrace()}")
-            }
-        }
-    }
-
-    var loggedNurse: Nurse by mutableStateOf(Nurse(1, "", "", "", "", "", null))
-
-    // Get by id
-    fun getById(id: Long) {
-        viewModelScope.launch {
-            nurseUiState = NurseUiState.Loading
-
-            try {
-                val nurse: Nurse = Connection.apiNurse.getNurseById(id)
-                nurseUiState = NurseUiState.Success(nurse)
-                Log.d("Succesful: get by id", "Succesful connection to API")
-            } catch (e: Exception) {
-                nurseUiState = NurseUiState.Error
-                Log.d("Failed: get by id", "Failed connection to API: ${e.message} ${e.printStackTrace()}")
-            }
-        }
-    }
-
-    // Login
+    // LOGIN
     private val _loginEvent = Channel<Boolean>(Channel.BUFFERED)
     val loginEvent = _loginEvent.receiveAsFlow()
+    var loggedNurse: Nurse by mutableStateOf(Nurse(1, "", "", "", "", "", null))
 
     fun login(username: String, password: String) {
         viewModelScope.launch {
@@ -219,17 +180,97 @@ class NurseViewModel(application: Application) : AndroidViewModel(application) {
                 Connection.apiNurse.login(LoginRequest(username, password))
                     .isSuccessful
             } catch (e: Exception) {
-                Log.d("Failed: login", "Failed connection to API ${e.message} ${e.printStackTrace()}")
+                Log.d(
+                    "Failed: login",
+                    "Failed connection to API ${e.message} ${e.printStackTrace()}"
+                )
                 false
             }
         }
+
+    // LIST
+    var nurseListUiState: NurseListUiState by mutableStateOf(NurseListUiState.Loading)
+    fun getAll() {
+        viewModelScope.launch {
+            nurseListUiState = NurseListUiState.Loading
+            try {
+                val nurseList: List<Nurse> = Connection.apiNurse.getAll()
+                nurseListUiState = NurseListUiState.Success(nurseList)
+                Log.d("Succesful: list", "Succesful connection to API")
+            } catch (e: Exception) {
+                Log.d(
+                    "Failed: list",
+                    "Failed connection to API: ${e.message} ${e.printStackTrace()}"
+                )
+                nurseListUiState = NurseListUiState.Error
+            }
+        }
+    }
+
+    // GET BY NAME
+    var nurseUiState: NurseUiState by mutableStateOf(NurseUiState.Loading)
+    fun clearNurseUiState() {
+        nurseUiState = NurseUiState.Loading
+    }
+
+    fun searchNurse(name: String) {
+        viewModelScope.launch {
+            nurseUiState = NurseUiState.Loading
+
+            try {
+                val nurse: Nurse = Connection.apiNurse.searchNurse(name)
+                nurseUiState = NurseUiState.Success(nurse)
+                Log.d("Succesful: get by name: searchNurse", "Succesful connection to API")
+            } catch (e: Exception) {
+                nurseUiState = NurseUiState.Error
+                Log.d(
+                    "Failed: get by name",
+                    "Failed connection to API: ${e.message} ${e.printStackTrace()}"
+                )
+            }
+        }
+    }
 
     fun updateSearchQuery(newQuery: String) {
         _searchQuery.value = newQuery
         searchNurse(newQuery)
     }
 
-    fun clearNurseUiState(){
-        nurseUiState = NurseUiState.Loading
+    // GET BY USERNAME
+    fun searchUser(username: String) {
+        viewModelScope.launch {
+            nurseUiState = NurseUiState.Loading
+
+            try {
+                val nurse: Nurse = Connection.apiNurse.searchUser(username)
+                nurseUiState = NurseUiState.Success(nurse)
+                Log.d("Succesful: search user", "Succesful connection to API")
+            } catch (e: Exception) {
+                nurseUiState = NurseUiState.Error
+                Log.d(
+                    "Failed: search user",
+                    "Failed connection to API: ${e.message} ${e.printStackTrace()}"
+                )
+            }
+        }
+    }
+
+    // GET BY ID
+    fun getById(id: Long) {
+        viewModelScope.launch {
+            nurseUiState = NurseUiState.Loading
+
+            try {
+                val nurse: Nurse = Connection.apiNurse.getNurseById(id)
+                nurseUiState = NurseUiState.Success(nurse)
+                Log.d("Succesful: get by id", "Succesful connection to API")
+            } catch (e: Exception) {
+                nurseUiState = NurseUiState.Error
+                Log.d(
+                    "Failed: get by id",
+                    "Failed connection to API: ${e.message} ${e.printStackTrace()}"
+                )
+            }
+        }
     }
 }

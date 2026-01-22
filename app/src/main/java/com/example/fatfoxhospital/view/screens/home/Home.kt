@@ -83,6 +83,7 @@ fun HomeScreen(
                     modifier = Modifier.size(72.dp)
                 )
                 Spacer(modifier = Modifier.width(12.dp))
+
                 Text(
                     text = stringResource(R.string.hospital_manager_title),
                     style = MaterialTheme.typography.headlineLarge.copy(
@@ -91,7 +92,6 @@ fun HomeScreen(
                     )
                 )
             }
-
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 modifier = Modifier.fillMaxSize()
@@ -133,6 +133,7 @@ private fun MenuItemCard(item: MenuItem) {
                 )
             }
             Spacer(modifier = Modifier.width(20.dp))
+
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = item.title,
@@ -140,6 +141,7 @@ private fun MenuItemCard(item: MenuItem) {
                     fontWeight = FontWeight.Bold
                 )
                 Spacer(modifier = Modifier.height(4.dp))
+
                 Text(
                     text = item.description,
                     style = MaterialTheme.typography.bodyMedium,

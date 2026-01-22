@@ -20,8 +20,8 @@ fun Nurse.getProfilePainter(): Painter {
                 return BitmapPainter(bitmap.asImageBitmap())
             }
         } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
-
     return painterResource(id = R.drawable.perfil1)
 }
