@@ -4,7 +4,6 @@ import android.app.Application
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Log
-import android.util.Patterns
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -34,50 +33,23 @@ data class RegistrationUiState(
     val email: String = "",
     val username: String = "",
     val password: String = "",
-    val profile: Byte = 0,
+    val profile: ByteArray? = null, // 存储 LONGBLOB 数据
+    val profileIndex: Int = 0,      // 记录当前选中的资源索引
     val errorMessage: String? = null,
     val isRegistrationSuccessful: Boolean = false
 )
 
 class NurseViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val _remoteNurse = MutableStateFlow<Nurse?>(null)
-    val remoteNurse:StateFlow<Nurse?> = _remoteNurse
-
-
-    private val _nurses = MutableLiveData<List<Nurse>>(getMockNurses())
-    val nurses: LiveData<List<Nurse>> = _nurses
-
-    var numberNurses = (_nurses.value?.size ?: 0).toLong()
-
     private val _searchQuery = MutableLiveData("")
     val searchQuery: LiveData<String> = _searchQuery
-
-    private val _searchResults = MutableLiveData<List<Nurse>>(emptyList())
-    val searchResults: LiveData<List<Nurse>> = _searchResults
-
     private val _selectedNurse = MutableLiveData<Nurse?>()
     val selectedNurse: LiveData<Nurse?> = _selectedNurse
-
     private val _uiState = MutableStateFlow(RegistrationUiState())
     val uiState: StateFlow<RegistrationUiState> = _uiState.asStateFlow()
 
-    private val existingEmails = listOf("alice.johnson@fatfox.com", "bob.smith@fatfox.com")
-    private val existingUsers = listOf("alice.j", "bob.s")
-
-    // LIST
 
 
-    // SEARCH
-    private fun filterNurses(query: String): List<Nurse> {
-        if (query.isBlank()) return emptyList()
-        val lowerQuery = query.lowercase()
-        return _nurses.value?.filter {
-            it.name.lowercase().contains(lowerQuery) ||
-                    it.surname.lowercase().contains(lowerQuery) ||
-                    it.user.lowercase().contains(lowerQuery)
-        } ?: emptyList()
-    }
 
     // DETAIL
     fun selectNurse(nurse: Nurse) {
@@ -91,14 +63,12 @@ class NurseViewModel(application: Application) : AndroidViewModel(application) {
     // LOGIN
     private val _loginEvent = Channel<Boolean>(Channel.BUFFERED)
     val loginEvent = _loginEvent.receiveAsFlow()
-
     fun login(username: String, password: String) {
         viewModelScope.launch {
             val ok = loginAuthenticate(username, password)
             _loginEvent.send(ok)   // true 成功，false 失败
         }
     }
-
     private suspend fun loginAuthenticate(username: String, password: String): Boolean =
         withContext(Dispatchers.IO) {
             try {
@@ -112,41 +82,41 @@ class NurseViewModel(application: Application) : AndroidViewModel(application) {
 
 
     // REGISTRATION
-    fun updateName(newName: String) {
-        _uiState.value = _uiState.value.copy(name = newName, errorMessage = null)
-    }
+    fun updateName(newName: String) { _uiState.value = _uiState.value.copy(name = newName) }
+    fun updateSurname(newSurname: String) { _uiState.value = _uiState.value.copy(surname = newSurname) }
+    fun updateEmail(newEmail: String) { _uiState.value = _uiState.value.copy(email = newEmail.trim()) }
+    fun updateUsername(newUsername: String) { _uiState.value = _uiState.value.copy(username = newUsername.trim()) }
+    fun updatePassword(newPassword: String) { _uiState.value = _uiState.value.copy(password = newPassword) }
+    fun registrationComplete() { _uiState.value = RegistrationUiState() }
+    fun clearErrorMessage() { _uiState.value = _uiState.value.copy(errorMessage = null) }
 
-    fun updateSurname(newSurname: String) {
-        _uiState.value = _uiState.value.copy(surname = newSurname, errorMessage = null)
+    init {
+        updateProfileRes(0)
     }
-
-    fun updateEmail(newEmail: String) {
-        _uiState.value = _uiState.value.copy(email = newEmail.trim(), errorMessage = null)
+    private fun getByteArrayFromResource(resId: Int): ByteArray {
+        val bitmap = BitmapFactory.decodeResource(getApplication<Application>().resources, resId)
+        val stream = ByteArrayOutputStream()
+        // Utilice el formato PNG
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+        return stream.toByteArray()
     }
-
-    fun updateUsername(newUsername: String) {
-        _uiState.value = _uiState.value.copy(username = newUsername.trim(), errorMessage = null)
+    fun updateProfileRes(newIndex: Int) {
+        val resId = PROFILE_RESOURCES[newIndex]
+        val imageBytes = getByteArrayFromResource(resId)
+        _uiState.value = _uiState.value.copy(
+            profile = imageBytes,
+            profileIndex = newIndex,
+            errorMessage = null
+        )
     }
-
-    fun updatePassword(newPassword: String) {
-        _uiState.value = _uiState.value.copy(password = newPassword, errorMessage = null)
-    }
-
-    fun updateProfileRes(newIndex: Byte) {
-        _uiState.value = _uiState.value.copy(profile = newIndex, errorMessage = null)
-    }
-
     fun registerNurse() {
         viewModelScope.launch {
             val state = _uiState.value
-
-            // Validación local de campos obligatorios
             if (state.name.isBlank() || state.surname.isBlank() || state.email.isBlank() ||
                 state.username.isBlank() || state.password.isBlank()) {
                 _uiState.value = state.copy(errorMessage = "Error: Todos los campos son obligatorios.")
                 return@launch
             }
-
             try {
                 val newNurse = Nurse(
                     id = null,
@@ -155,96 +125,48 @@ class NurseViewModel(application: Application) : AndroidViewModel(application) {
                     email = state.email.trim(),
                     user = state.username.trim(),
                     password = state.password,
-                    profile = byteArrayOf(state.profile)
+                    profile = state.profile
                 )
-
-                // Intento de registro
                 val response = Connection.apiNurse.createNurse(newNurse)
-
                 if (response.isSuccessful) {
-                    // Éxito total
-                    _uiState.value = state.copy(
-                        isRegistrationSuccessful = true,
-                        errorMessage = null
-                    )
-                    Log.d("API_SUCCESS", "Nurse created successfully")
+                    _uiState.value = state.copy(isRegistrationSuccessful = true, errorMessage = null)
                 } else {
-                    // El servidor respondió con un error
                     val errorBody = response.errorBody()?.string()
-                    Log.e("API_ERROR", "Respuesta de error: $errorBody")
+                    Log.e("API_ERROR", "Error response: $errorBody")
                     _uiState.value = state.copy(errorMessage = "Error del servidor: ${response.code()}")
                 }
-
             } catch (e: Exception) {
-                // Diagnosis del error de procesamiento
-                Log.e("API_EXCEPTION", "Clase de error: ${e.javaClass.simpleName}")
-                Log.e("API_EXCEPTION", "Mensaje: ${e.message}")
-
-                // Si el error es "MalformedJsonException" o "EOFException", el problema es el formato de respuesta
-                if (e is com.google.gson.JsonSyntaxException) {
-                    _uiState.value = state.copy(errorMessage = "Error: El servidor envió un formato de datos incompatible.")
-                } else {
-                    _uiState.value = state.copy(errorMessage = "Error de conexión o datos: ${e.localizedMessage}")
-                }
+                Log.e("API_EXCEPTION", "Error: ${e.message}")
+                _uiState.value = state.copy(errorMessage = "Error de conexión: ${e.localizedMessage}")
             }
         }
     }
 
-    fun registrationComplete() {
-        _uiState.value = RegistrationUiState()
-    }
-
-    fun clearErrorMessage() {
-        _uiState.value = _uiState.value.copy(errorMessage = null)
-    }
-
+    // Lista de índices
     companion object {
         val PROFILE_RESOURCES = listOf(
-            R.drawable.perfil1, // 索引 0
-            R.drawable.perfil2, // 索引 1
-            R.drawable.perfil3, // 索引 2
-            R.drawable.perfil4, // 索引 3
-            R.drawable.perfil5, // 索引 4
-            R.drawable.perfil7  // 索引 5
+            R.drawable.perfil1,
+            R.drawable.perfil2,
+            R.drawable.perfil3,
+            R.drawable.perfil4,
+            R.drawable.perfil5,
+            R.drawable.perfil7
         )
-        fun getResIdFromByte(profileByte: Byte): Int {
-            val index = profileByte.toInt()
-            return if (index in PROFILE_RESOURCES.indices) {
-                PROFILE_RESOURCES[index]
-            } else {
-                R.drawable.perfil1 // 默认图
-            }
-        }
     }
 
-
-
-    private fun getMockNurses(): List<Nurse> = listOf(
-        Nurse(1, "Alice", "Johnson", "alice.johnson@fatfox.com", "alice.j", "pass123", byteArrayOf(0)),
-        Nurse(2, "Alina", "Kovacs", "alina.kovacs@fatfox.com", "alina.k", "qwerty", byteArrayOf(1)),
-        Nurse(3, "Bob", "Smith", "bob.smith@fatfox.com", "bob.s", "abc123", byteArrayOf(2)),
-        Nurse(4, "Charlie", "Brown", "charlie.brown@fatfox.com", "charlie.b", "password123", byteArrayOf(1)),
-        Nurse(5, "David", "Lee", "david.lee@fatfox.com", "david.l", "letmein", byteArrayOf(5)), // 修正了索引6，通常头像索引不超过5
-        Nurse(6, "Emma", "Wilson", "emma.wilson@fatfox.com", "emma.w", "secure456", byteArrayOf(4)),
-        Nurse(7, "Fiona", "Garcia", "fiona.garcia@fatfox.com", "fiona.g", "medical789", byteArrayOf(4)),
-        Nurse(8, "George", "Miller", "george.miller@fatfox.com", "george.m", "hospital321", byteArrayOf(0))
-    )
-
-
-    // Backend
     // List
     var nurseListUiState: NurseListUiState by mutableStateOf(NurseListUiState.Loading);
-    fun getAll(){
+    fun getAll() {
         viewModelScope.launch {
             nurseListUiState = NurseListUiState.Loading
-
             try {
                 val nurseList: List<Nurse> = Connection.apiNurse.getAll()
                 nurseListUiState = NurseListUiState.Success(nurseList)
-                Log.d("Succesful","Succesful connection to API")
-            }catch (e: Exception){
-                Log.d("Failed", "Failed connection to API: ${e.message} ${e.printStackTrace()}")
-                nurseListUiState = NurseListUiState.Error
+                Log.d("Successful", "Successful connection to API")
+            } catch (e: Exception) {
+                Log.e("Failed", "API Connection Error: ${e.message}", e)
+                val errorMessage = e.localizedMessage ?: "Unknown connection error"
+                nurseListUiState = NurseListUiState.Error(errorMessage)
             }
         }
     }
@@ -265,69 +187,8 @@ class NurseViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
     }
-
     fun updateSearchQuery(newQuery: String) {
         _searchQuery.value = newQuery
         searchNurse(newQuery)
     }
-
-    private fun getMockNurses(): List<Nurse> = listOf(
-        // Modificado: Añadido el profileResId
-        Nurse(
-            1,
-            "Alice",
-            "Johnson",
-            "alice.johnson@fatfox.com",
-            "alice.j",
-            "pass123",
-            0
-        ),
-        Nurse(
-            2,
-            "Alina",
-            "Kovacs",
-            "alina.kovacs@fatfox.com",
-            "alina.k",
-            "qwerty",
-            1
-        ),
-        Nurse(3, "Bob", "Smith", "bob.smith@fatfox.com", "bob.s", "abc123", 2),
-        Nurse(
-            4,
-            "Charlie",
-            "Brown",
-            "charlie.brown@fatfox.com",
-            "charlie.b",
-            "password123",
-            1
-        ),
-        Nurse(5, "David", "Lee", "david.lee@fatfox.com", "david.l", "letmein", 6),
-        Nurse(
-            6,
-            "Emma",
-            "Wilson",
-            "emma.wilson@fatfox.com",
-            "emma.w",
-            "secure456",
-            4
-        ),
-        Nurse(
-            7,
-            "Fiona",
-            "Garcia",
-            "fiona.garcia@fatfox.com",
-            "fiona.g",
-            "medical789",
-            4
-        ),
-        Nurse(
-            8,
-            "George",
-            "Miller",
-            "george.miller@fatfox.com",
-            "george.m",
-            "hospital321",
-            0
-        )
-    )
 }

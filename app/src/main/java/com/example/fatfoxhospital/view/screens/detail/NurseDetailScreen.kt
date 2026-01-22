@@ -7,13 +7,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -30,12 +28,6 @@ fun NurseDetailScreen(
 ) {
     val selectedNurse by viewModel.selectedNurse.observeAsState()
 
-    LaunchedEffect(nurseId) {
-        if (nurseId != null && selectedNurse?.id != nurseId) {
-            val nurse = viewModel.nurses.value?.find { it.id == nurseId }
-            nurse?.let { viewModel.selectNurse(it) }
-        }
-    }
 
     Scaffold(
         topBar = {

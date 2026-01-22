@@ -20,7 +20,7 @@ interface NurseApiEndpoints {
 
     // READ BY ID: @GetMapping("/{id}")
     @GET("nurse/{id}")
-    suspend fun getNurse(@Path("id") id: Long): Response<Nurse>
+    suspend fun getNurse(@Path("id") id: Long): Response<Void>
 
     // GET BY NAME: @GetMapping("/name/{name}")
     @GET("nurse/name/{name}")
