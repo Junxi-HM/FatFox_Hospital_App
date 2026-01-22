@@ -14,6 +14,7 @@ import com.example.fatfoxhospital.view.screens.home.HomeScreen
 import com.example.fatfoxhospital.view.screens.home.MainScreen
 import com.example.fatfoxhospital.view.screens.list.NurseListScreen
 import com.example.fatfoxhospital.view.screens.login.NurseLoginScreen
+import com.example.fatfoxhospital.view.screens.profile.NurseProfileScreen
 import com.example.fatfoxhospital.view.screens.register.NurseRegistrationScreen
 import com.example.fatfoxhospital.view.screens.search.SearchScreen
 import com.example.fatfoxhospital.viewmodel.NurseViewModel
@@ -36,7 +37,8 @@ fun NavGraph() {
             HomeScreen(
                 onNavigateToSearch = { navController.navigate("search") },
                 onNavigateToNurseList = { navController.navigate("nurse_list") },
-                onNavigateToHome = { navController.navigate("home") }
+                onNavigateToHome = { navController.navigate("home") },
+                onNavigateToProfile = { navController.navigate("nurse_profile") }
             )
         }
 
@@ -83,6 +85,16 @@ fun NavGraph() {
             NurseDetailScreen(
                 viewModel = viewModel,
                 nurseId = nurseId,
+                onBack = {
+                    viewModel.clearSelectedNurse()
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(route = "nurse_profile") {
+            NurseProfileScreen(
+                viewModel = viewModel,
                 onBack = {
                     viewModel.clearSelectedNurse()
                     navController.popBackStack()

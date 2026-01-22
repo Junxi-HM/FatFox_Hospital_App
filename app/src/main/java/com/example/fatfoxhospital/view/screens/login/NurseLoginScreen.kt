@@ -1,5 +1,6 @@
 package com.example.fatfoxhospital.view.screens.login
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -25,6 +26,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.fatfoxhospital.R
 import com.example.fatfoxhospital.viewmodel.NurseViewModel
+import com.example.fatfoxhospital.viewmodel.uistate.NurseUiState
 
 @Composable
 fun NurseLoginScreen(viewModel: NurseViewModel, navController: NavHostController) {
@@ -32,18 +34,29 @@ fun NurseLoginScreen(viewModel: NurseViewModel, navController: NavHostController
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     val context = LocalContext.current
+    val nurseUiState = viewModel.nurseUiState
 
-    /* 收集登录结果 */
-    LaunchedEffect(Unit) {
+    LaunchedEffect(viewModel.loginEvent) {
         viewModel.loginEvent.collect { success ->
             if (success) {
-                Toast.makeText(context, R.string.login_success_toast, Toast.LENGTH_SHORT).show()
-                navController.navigate("home") { popUpTo("login") { inclusive = true } }
+                viewModel.searchUser(username)
             } else {
                 Toast.makeText(context, R.string.login_failed_toast, Toast.LENGTH_SHORT).show()
             }
         }
     }
+
+    LaunchedEffect(nurseUiState) {
+        if (nurseUiState is NurseUiState.Success) {
+            val nurse = nurseUiState.nurse
+            viewModel.loggedNurse = nurse
+            Toast.makeText(context, R.string.login_success_toast, Toast.LENGTH_SHORT).show()
+            navController.navigate("home") { popUpTo("login") { inclusive = true } }
+        } else if (nurseUiState is NurseUiState.Error) {
+            Toast.makeText(context, R.string.login_failed_toast, Toast.LENGTH_SHORT).show()
+        }
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -99,7 +112,12 @@ fun NurseLoginScreen(viewModel: NurseViewModel, navController: NavHostController
                 OutlinedTextField(
                     value = password,
                     onValueChange = { password = it },
-                    label = { Text(stringResource(R.string.password_label_login), fontSize = 15.sp) },
+                    label = {
+                        Text(
+                            stringResource(R.string.password_label_login),
+                            fontSize = 15.sp
+                        )
+                    },
                     visualTransformation = PasswordVisualTransformation(),
                     leadingIcon = {
                         Icon(
