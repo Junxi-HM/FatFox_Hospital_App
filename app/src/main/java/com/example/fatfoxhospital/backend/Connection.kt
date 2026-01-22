@@ -9,7 +9,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object Connection {
-    // Cree una instancia de Gson para manejar ByteArray <-> Base64 String.
+    // Create a Gson instance to handle ByteArray <-> Base64 String.
     private val gson = GsonBuilder()
         .registerTypeAdapter(ByteArray::class.java, JsonSerializer<ByteArray> { src, _, _ ->
             JsonPrimitive(Base64.encodeToString(src, Base64.NO_WRAP))

@@ -23,7 +23,6 @@ import com.example.fatfoxhospital.viewmodel.NurseViewModel
 @Composable
 fun NurseDetailScreen(
     viewModel: NurseViewModel,
-    nurseId: Long?,
     onBack: () -> Unit
 ) {
     val selectedNurse by viewModel.selectedNurse.observeAsState()
@@ -54,7 +53,7 @@ fun NurseDetailScreen(
             ) {
                 Image(
                     painter = nurse.getProfilePainter(),
-                    contentDescription = "Foto de perfil de ${nurse.name} ${nurse.surname}",
+                    contentDescription = "${stringResource(R.string.ProfilePicture)} ${nurse.name} ${nurse.surname}",
                     modifier = Modifier
                         .size(120.dp)
                         .clip(CircleShape)
@@ -84,21 +83,6 @@ fun NurseDetailScreen(
                         DetailRow(stringResource(R.string.email_detail_label), nurse.email)
                         Spacer(modifier = Modifier.height(8.dp))
                     }
-                }
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                Button(
-                    onClick = { /* Implementar contacto */ },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = MaterialTheme.shapes.large
-                ) {
-                    Text(
-                        stringResource(R.string.contact_nurse_button),
-                        modifier = Modifier.padding(vertical = 8.dp)
-                    )
                 }
             }
         } ?: run {

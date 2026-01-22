@@ -1,8 +1,6 @@
 package com.example.fatfoxhospital.view.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -78,13 +76,9 @@ fun NavGraph() {
         composable(
             route = "nurse_detail/{nurseId}",
             arguments = listOf(navArgument("nurseId") { type = NavType.LongType })
-        ) { backStackEntry ->
-            val nurseId = backStackEntry.arguments?.getLong("nurseId")
-            val selectedNurse by viewModel.selectedNurse.observeAsState()
-
+        ) {
             NurseDetailScreen(
                 viewModel = viewModel,
-                nurseId = nurseId,
                 onBack = {
                     viewModel.clearSelectedNurse()
                     navController.popBackStack()

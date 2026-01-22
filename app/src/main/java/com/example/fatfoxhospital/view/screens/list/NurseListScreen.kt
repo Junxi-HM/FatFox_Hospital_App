@@ -65,19 +65,16 @@ fun NurseListScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             when (nurseListUiState) {
-                is NurseListUiState.Loading -> item { Text("Cargando...") }
+                is NurseListUiState.Loading -> item { Text(stringResource(R.string.Loading)) }
                 is NurseListUiState.Error -> item {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Text(
-                            text = "Error al cargar datos:",
+                            text = stringResource(R.string.ErrorLoading),
                             color = MaterialTheme.colorScheme.error,
                             fontWeight = FontWeight.Bold
                         )
-
-                        Text(text = nurseListUiState.message)
-
                         Button(onClick = { viewModel.getAll() }) {
-                            Text("Retry")
+                            Text(stringResource(R.string.Retry))
                         }
                     }
                 }
@@ -107,7 +104,7 @@ fun NurseItem(nurse: Nurse, onClick: () -> Unit) {
         ) {
             Image(
                 painter = nurse.getProfilePainter(),
-                contentDescription = "Foto de perfil de ${nurse.name} ${nurse.surname}",
+                contentDescription = "${stringResource(R.string.ProfilePicture)} ${nurse.name} ${nurse.surname}",
                 modifier = Modifier
                     .size(56.dp)
                     .clip(CircleShape)

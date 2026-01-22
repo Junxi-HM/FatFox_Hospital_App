@@ -11,11 +11,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.fatfoxhospital.R
+import com.example.fatfoxhospital.extension.getProfilePainter
 import com.example.fatfoxhospital.model.Nurse
 import com.example.fatfoxhospital.viewmodel.NurseViewModel
 import com.example.fatfoxhospital.viewmodel.uistate.NurseUiState
@@ -30,7 +30,8 @@ fun NurseProfileScreen(
     val nurseUiState = viewModel.nurseUiState
 
     LaunchedEffect(Unit) {
-        viewModel.getById(viewModel.loggedNurse.id)
+        viewModel.clearNurseUiState()
+        viewModel.getById(viewModel.loggedNurse.id!!)
     }
 
     Scaffold(
@@ -50,15 +51,17 @@ fun NurseProfileScreen(
                 }
             )
         }
-    ) {
+    ) { innerPadding ->
         when (nurseUiState) {
             is NurseUiState.Loading -> {
-                Text("Loading...")
+                Text("Loading...", modifier = Modifier.padding(innerPadding))
             }
 
             is NurseUiState.Error -> {
                 Box(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
@@ -74,12 +77,13 @@ fun NurseProfileScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
+                        .padding(innerPadding)
                         .padding(24.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Image(
-                        painter = painterResource(id = NurseViewModel.getResIdFromByte(nurse.profileRes)),
-                        contentDescription = "Foto de perfil de ${nurse.name} ${nurse.surname}",
+                        painter = nurse.getProfilePainter(),
+                        contentDescription = "${stringResource(R.string.ProfilePicture)} ${nurse.name} ${nurse.surname}",
                         modifier = Modifier
                             .size(120.dp)
                             .clip(CircleShape)
@@ -113,15 +117,26 @@ fun NurseProfileScreen(
 
                     Spacer(modifier = Modifier.height(24.dp))
 
-                    Spacer(modifier = Modifier.height(24.dp))
-
                     Button(
-                        onClick = { /* Implementar contacto */ },
+                        onClick = { /* Implement Update */ },
                         modifier = Modifier.fillMaxWidth(),
                         shape = MaterialTheme.shapes.large
                     ) {
                         Text(
-                            stringResource(R.string.contact_nurse_button),
+                            stringResource(R.string.updateNurse),
+                            modifier = Modifier.padding(vertical = 8.dp)
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    Button(
+                        onClick = { /* Implement Delete */ },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = MaterialTheme.shapes.large
+                    ) {
+                        Text(
+                            stringResource(R.string.deleteNurse),
                             modifier = Modifier.padding(vertical = 8.dp)
                         )
                     }

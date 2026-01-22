@@ -10,6 +10,7 @@ import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -33,6 +34,10 @@ fun SearchScreen(
 ) {
     val query by viewModel.searchQuery.observeAsState("")
     val nurseUiState = viewModel.nurseUiState
+
+    LaunchedEffect(Unit) {
+        viewModel.clearNurseUiState()
+    }
 
     Scaffold(
         topBar = {
@@ -150,7 +155,7 @@ private fun NurseCard(nurse: Nurse, onClick: () -> Unit) {
         ) {
             Image(
                 painter = nurse.getProfilePainter(),
-                contentDescription = "Foto de perfil de ${nurse.name} ${nurse.surname}",
+                contentDescription = "${stringResource(R.string.ProfilePicture)} ${nurse.name} ${nurse.surname}",
                 modifier = Modifier
                     .size(60.dp)
                     .clip(CircleShape)

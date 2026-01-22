@@ -33,8 +33,8 @@ data class RegistrationUiState(
     val email: String = "",
     val username: String = "",
     val password: String = "",
-    val profile: ByteArray? = null, // 存储 LONGBLOB 数据
-    val profileIndex: Int = 0,      // 记录当前选中的资源索引
+    val profile: ByteArray? = null,
+    val profileIndex: Int = 0,
     val errorMessage: String? = null,
     val isRegistrationSuccessful: Boolean = false
 )
@@ -75,7 +75,7 @@ class NurseViewModel(application: Application) : AndroidViewModel(application) {
     private fun getByteArrayFromResource(resId: Int): ByteArray {
         val bitmap = BitmapFactory.decodeResource(getApplication<Application>().resources, resId)
         val stream = ByteArrayOutputStream()
-        // Utilice el formato PNG
+        // Use the PNG format
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
         return stream.toByteArray()
     }
@@ -112,16 +112,16 @@ class NurseViewModel(application: Application) : AndroidViewModel(application) {
                 } else {
                     val errorBody = response.errorBody()?.string()
                     Log.e("API_ERROR", "Error response: $errorBody")
-                    _uiState.value = state.copy(errorMessage = "Error del servidor: ${response.code()}")
+                    _uiState.value = state.copy(errorMessage = "Server error: ${response.code()}")
                 }
             } catch (e: Exception) {
                 Log.e("API_EXCEPTION", "Error: ${e.message}")
-                _uiState.value = state.copy(errorMessage = "Error de conexión: ${e.localizedMessage}")
+                _uiState.value = state.copy(errorMessage = "Connection error: ${e.localizedMessage}")
             }
         }
     }
 
-    // Lista de índices
+    // List of indexes
     companion object {
         val PROFILE_RESOURCES = listOf(
             R.drawable.perfil1,
@@ -134,7 +134,7 @@ class NurseViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     // List
-    var nurseListUiState: NurseListUiState by mutableStateOf(NurseListUiState.Loading);
+    var nurseListUiState: NurseListUiState by mutableStateOf(NurseListUiState.Loading)
     fun getAll() {
         viewModelScope.launch {
             nurseListUiState = NurseListUiState.Loading
@@ -150,7 +150,7 @@ class NurseViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     // Search/Get by name
-    var nurseUiState: NurseUiState by mutableStateOf(NurseUiState.Loading);
+    var nurseUiState: NurseUiState by mutableStateOf(NurseUiState.Loading)
     fun searchNurse(name: String) {
         viewModelScope.launch {
             nurseUiState = NurseUiState.Loading
@@ -182,7 +182,7 @@ class NurseViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    var loggedNurse: Nurse by mutableStateOf(Nurse(1, "", "", "", "", "", 0.toByte()))
+    var loggedNurse: Nurse by mutableStateOf(Nurse(1, "", "", "", "", "", null))
 
     // Get by id
     fun getById(id: Long) {
@@ -219,7 +219,7 @@ class NurseViewModel(application: Application) : AndroidViewModel(application) {
                 Connection.apiNurse.login(LoginRequest(username, password))
                     .isSuccessful
             } catch (e: Exception) {
-                Log.d("Failed: login", "Failed connection to API")
+                Log.d("Failed: login", "Failed connection to API ${e.message} ${e.printStackTrace()}")
                 false
             }
         }
@@ -227,5 +227,9 @@ class NurseViewModel(application: Application) : AndroidViewModel(application) {
     fun updateSearchQuery(newQuery: String) {
         _searchQuery.value = newQuery
         searchNurse(newQuery)
+    }
+
+    fun clearNurseUiState(){
+        nurseUiState = NurseUiState.Loading
     }
 }

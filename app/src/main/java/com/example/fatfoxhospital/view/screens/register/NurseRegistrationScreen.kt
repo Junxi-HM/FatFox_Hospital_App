@@ -95,7 +95,7 @@ fun NurseRegistrationScreen(
                 modifier = Modifier.padding(bottom = 24.dp)
             )
 
-            // Selector de imágenes
+            // Image selector
             ProfileImageSelector(
                 profileBytes = uiState.profile,
                 currentIndex = uiState.profileIndex,
@@ -178,27 +178,28 @@ private fun ProfileImageSelector(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.padding(vertical = 16.dp)
     ) {
-        // Si hay datos de bytes, descodifíquelos y muéstrelos como un mapa de bits; de lo contrario, muestre una imagen de marcador de posición.
+
+        // If there is byte data, decode it and display it as a bitmap; otherwise, display a placeholder image.
         if (profileBytes != null && profileBytes.isNotEmpty()) {
             val bitmap = remember(profileBytes) {
                 BitmapFactory.decodeByteArray(profileBytes, 0, profileBytes.size)
             }
             Image(
                 bitmap = bitmap.asImageBitmap(),
-                contentDescription = "Foto de perfil",
+                contentDescription = stringResource(R.string.ProfilePicture),
                 modifier = Modifier.size(96.dp).padding(bottom = 8.dp)
             )
         } else {
             Image(
                 painter = painterResource(id = R.drawable.perfil1),
-                contentDescription = "Placeholder",
+                contentDescription = stringResource(R.string.Placeholder),
                 modifier = Modifier.size(96.dp).padding(bottom = 8.dp)
             )
         }
 
         Button(
             onClick = {
-                // Calcula el siguiente índice y vuelve a llamar al ViewModel para volver a leer los bytes de la imagen
+                // Calculates the next index and calls the ViewModel again to reread the image bytes
                 val nextIndex = (currentIndex + 1) % totalResources
                 onImageSelected(nextIndex)
             }
