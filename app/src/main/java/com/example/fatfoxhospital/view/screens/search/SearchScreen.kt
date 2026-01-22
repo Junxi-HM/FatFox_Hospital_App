@@ -15,11 +15,11 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.fatfoxhospital.R
+import com.example.fatfoxhospital.extension.getProfilePainter
 import com.example.fatfoxhospital.model.Nurse
 import com.example.fatfoxhospital.viewmodel.NurseViewModel
 import com.example.fatfoxhospital.viewmodel.uistate.NurseUiState
@@ -149,7 +149,7 @@ private fun NurseCard(nurse: Nurse, onClick: () -> Unit) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
-                painter = painterResource(id = NurseViewModel.getResIdFromByte(nurse.profileRes)),
+                painter = nurse.getProfilePainter(),
                 contentDescription = "Foto de perfil de ${nurse.name} ${nurse.surname}",
                 modifier = Modifier
                     .size(60.dp)

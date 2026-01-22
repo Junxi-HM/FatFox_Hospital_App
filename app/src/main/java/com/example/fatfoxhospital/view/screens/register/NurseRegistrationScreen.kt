@@ -1,5 +1,6 @@
 package com.example.fatfoxhospital.view.screens.register
 
+import android.graphics.BitmapFactory
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -10,6 +11,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -36,11 +38,9 @@ fun NurseRegistrationScreen(
     LaunchedEffect(uiState.isRegistrationSuccessful) {
         if (uiState.isRegistrationSuccessful) {
             snackbarHostState.showSnackbar(successMessage)
-
             navController.navigate("login") {
                 popUpTo("nurse_registration") { inclusive = true }
             }
-
             viewModel.registrationComplete()
         }
     }
@@ -95,8 +95,10 @@ fun NurseRegistrationScreen(
                 modifier = Modifier.padding(bottom = 24.dp)
             )
 
+            // Selector de imágenes
             ProfileImageSelector(
-                currentResByte = uiState.profileRes,
+                profileBytes = uiState.profile,
+                currentIndex = uiState.profileIndex,
                 onImageSelected = viewModel::updateProfileRes
             )
 
@@ -104,18 +106,14 @@ fun NurseRegistrationScreen(
                 value = uiState.name,
                 onValueChange = viewModel::updateName,
                 label = { Text(stringResource(R.string.name_label)) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
+                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
             )
 
             OutlinedTextField(
                 value = uiState.surname,
                 onValueChange = viewModel::updateSurname,
                 label = { Text(stringResource(R.string.surname_label)) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
+                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
             )
 
             OutlinedTextField(
@@ -123,18 +121,14 @@ fun NurseRegistrationScreen(
                 onValueChange = viewModel::updateEmail,
                 label = { Text(stringResource(R.string.email_label)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
+                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
             )
 
             OutlinedTextField(
                 value = uiState.username,
                 onValueChange = viewModel::updateUsername,
                 label = { Text(stringResource(R.string.username_label_registration)) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
+                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
             )
 
             OutlinedTextField(
@@ -143,9 +137,7 @@ fun NurseRegistrationScreen(
                 label = { Text(stringResource(R.string.password_label)) },
                 visualTransformation = PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
+                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
             )
 
             Spacer(modifier = Modifier.height(32.dp))
@@ -153,9 +145,7 @@ fun NurseRegistrationScreen(
             Button(
                 onClick = viewModel::registerNurse,
                 enabled = !uiState.isRegistrationSuccessful,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp)
+                modifier = Modifier.fillMaxWidth().height(50.dp)
             ) {
                 Text(stringResource(R.string.register_button))
             }
@@ -178,27 +168,39 @@ fun NurseRegistrationScreen(
 
 @Composable
 private fun ProfileImageSelector(
-    currentResByte: Byte, // 改为接收 Byte
-    onImageSelected: (Byte) -> Unit // 改为回调 Byte
+    profileBytes: ByteArray?,
+    currentIndex: Int,
+    onImageSelected: (Int) -> Unit
 ) {
-    val resources = NurseViewModel.PROFILE_RESOURCES
+    val totalResources = NurseViewModel.PROFILE_RESOURCES.size
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.padding(vertical = 16.dp)
     ) {
-        Image(
-            painter = painterResource(id = NurseViewModel.getResIdFromByte(currentResByte)),
-            contentDescription = "Foto de perfil",
-            modifier = Modifier
-                .size(96.dp)
-                .padding(bottom = 8.dp)
-        )
+        // Si hay datos de bytes, descodifíquelos y muéstrelos como un mapa de bits; de lo contrario, muestre una imagen de marcador de posición.
+        if (profileBytes != null && profileBytes.isNotEmpty()) {
+            val bitmap = remember(profileBytes) {
+                BitmapFactory.decodeByteArray(profileBytes, 0, profileBytes.size)
+            }
+            Image(
+                bitmap = bitmap.asImageBitmap(),
+                contentDescription = "Foto de perfil",
+                modifier = Modifier.size(96.dp).padding(bottom = 8.dp)
+            )
+        } else {
+            Image(
+                painter = painterResource(id = R.drawable.perfil1),
+                contentDescription = "Placeholder",
+                modifier = Modifier.size(96.dp).padding(bottom = 8.dp)
+            )
+        }
 
         Button(
             onClick = {
-                val nextIndex = (currentResByte + 1) % resources.size
-                onImageSelected(nextIndex.toByte())
+                // Calcula el siguiente índice y vuelve a llamar al ViewModel para volver a leer los bytes de la imagen
+                val nextIndex = (currentIndex + 1) % totalResources
+                onImageSelected(nextIndex)
             }
         ) {
             Text(stringResource(R.string.select_profile_picture_button))

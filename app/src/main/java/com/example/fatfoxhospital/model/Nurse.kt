@@ -1,11 +1,11 @@
 package com.example.fatfoxhospital.model
 
 data class Nurse(
-    val id: Long,
+    val id: Long?,
     val name: String,
     val surname: String,
     val email: String,
     val user: String,
     val password: String,
-    val profileRes: Byte,
+    val profile: ByteArray? = null,
 )
