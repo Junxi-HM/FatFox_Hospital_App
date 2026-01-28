@@ -39,6 +39,20 @@ data class RegistrationUiState(
     val isRegistrationSuccessful: Boolean = false
 )
 
+// UI State for Update operations
+data class UpdateUiState(
+    val isLoading: Boolean = false,
+    val isSuccess: Boolean = false,
+    val errorMessage: String? = null
+)
+
+// UI State for Delete operations
+data class DeleteUiState(
+    val isLoading: Boolean = false,
+    val isSuccess: Boolean = false,
+    val errorMessage: String? = null
+)
+
 class NurseViewModel(application: Application) : AndroidViewModel(application) {
 
     private val _searchQuery = MutableLiveData("")
@@ -47,6 +61,14 @@ class NurseViewModel(application: Application) : AndroidViewModel(application) {
     val selectedNurse: LiveData<Nurse?> = _selectedNurse
     private val _uiState = MutableStateFlow(RegistrationUiState())
     val uiState: StateFlow<RegistrationUiState> = _uiState.asStateFlow()
+
+    // Update UI State
+    private val _updateUiState = MutableStateFlow(UpdateUiState())
+    val updateUiState: StateFlow<UpdateUiState> = _updateUiState.asStateFlow()
+
+    // Delete UI State
+    private val _deleteUiState = MutableStateFlow(DeleteUiState())
+    val deleteUiState: StateFlow<DeleteUiState> = _deleteUiState.asStateFlow()
 
     // DETAIL
     fun selectNurse(nurse: Nurse) {
@@ -120,6 +142,15 @@ class NurseViewModel(application: Application) : AndroidViewModel(application) {
         )
     }
 
+    // Clear update/delete states
+    fun clearUpdateState() {
+        _updateUiState.value = UpdateUiState()
+    }
+
+    fun clearDeleteState() {
+        _deleteUiState.value = DeleteUiState()
+    }
+
     // BACKEND
 
     // REGISTER
@@ -163,7 +194,7 @@ class NurseViewModel(application: Application) : AndroidViewModel(application) {
     // LOGIN
     private val _loginEvent = Channel<Boolean>(Channel.BUFFERED)
     val loginEvent = _loginEvent.receiveAsFlow()
-    var loggedNurse: Nurse by mutableStateOf(Nurse(1, "", "", "", "", "", null))
+    var loggedNurse: Nurse by mutableStateOf(Nurse(null, "", "", "", "", "", null))
 
     fun login(username: String, password: String) {
         viewModelScope.launch {
@@ -273,4 +304,96 @@ class NurseViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
     }
+
+    // UPDATE PROFILE
+    fun updateProfile(nurse: Nurse) {
+        viewModelScope.launch {
+            _updateUiState.value = UpdateUiState(isLoading = true)
+            try {
+                val id = nurse.id
+                if (id == null) {
+                    _updateUiState.value = UpdateUiState(
+                        isLoading = false,
+                        errorMessage = "Error: Nurse ID is null"
+                    )
+                    return@launch
+                }
+
+                // Validate required fields
+                if (nurse.name.isBlank() || nurse.surname.isBlank() ||
+                    nurse.user.isBlank() || nurse.password.isBlank()
+                ) {
+                    _updateUiState.value = UpdateUiState(
+                        isLoading = false,
+                        errorMessage = "Error: Name, surname, username and password are required"
+                    )
+                    return@launch
+                }
+
+                val response = Connection.apiNurse.updateNurse(id, nurse)
+                if (response.isSuccessful) {
+                    _updateUiState.value = UpdateUiState(isLoading = false, isSuccess = true)
+                    // Refresh the nurse data
+                    response.body()?.let { updatedNurse ->
+                        nurseUiState = NurseUiState.Success(updatedNurse)
+                        // Update loggedNurse if it's the same nurse
+                        if (loggedNurse.id == id) {
+                            loggedNurse = updatedNurse
+                        }
+                    }
+                    Log.d("Succesful: update", "Nurse updated successfully")
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    Log.e("API_ERROR", "Update error: $errorBody")
+                    _updateUiState.value = UpdateUiState(
+                        isLoading = false,
+                        errorMessage = "Server error: ${response.code()}"
+                    )
+                }
+            } catch (e: Exception) {
+                Log.e("API_EXCEPTION", "Update error: ${e.message}")
+                _updateUiState.value = UpdateUiState(
+                    isLoading = false,
+                    errorMessage = "Connection error: ${e.localizedMessage}"
+                )
+            }
+        }
+    }
+
+    // DELETE NURSE
+    fun deleteNurse(id: Long) {
+        viewModelScope.launch {
+            _deleteUiState.value = DeleteUiState(isLoading = true)
+            try {
+                val response = Connection.apiNurse.deleteNurse(id)
+                if (response.isSuccessful) {
+                    _deleteUiState.value = DeleteUiState(isLoading = false, isSuccess = true)
+                    Log.d("Succesful: delete", "Nurse deleted successfully")
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    Log.e("API_ERROR", "Delete error: $errorBody")
+                    _deleteUiState.value = DeleteUiState(
+                        isLoading = false,
+                        errorMessage = "Server error: ${response.code()}"
+                    )
+                }
+            } catch (e: Exception) {
+                Log.e("API_EXCEPTION", "Delete error: ${e.message}")
+                _deleteUiState.value = DeleteUiState(
+                    isLoading = false,
+                    errorMessage = "Connection error: ${e.localizedMessage}"
+                )
+            }
+        }
+    }
+
+
+    fun logout() {
+        loggedNurse = Nurse(null, "", "", "", "", "", null)
+        clearNurseUiState()
+        viewModelScope.launch {
+            _loginEvent.send(false)
+        }
+    }
+
 }

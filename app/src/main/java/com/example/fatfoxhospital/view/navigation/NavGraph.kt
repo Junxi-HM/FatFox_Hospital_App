@@ -92,7 +92,12 @@ fun NavGraph() {
                 onBack = {
                     viewModel.clearSelectedNurse()
                     navController.popBackStack()
+                } ,
+                onDeleteSuccess = {
+                    viewModel.logout()
+                    navController.popBackStack("main", inclusive = false)
                 }
+
             )
         }
     }
